@@ -1,0 +1,67 @@
+[
+  {
+    "id": "266",
+    "label": "Health Potion",
+    "category": "Potions"
+  },
+  {
+    "id": "268",
+    "label": "Mana Potion",
+    "category": "Potions"
+  },
+  {
+    "id": "236",
+    "label": "Strong Health Potion",
+    "category": "Potions"
+  },
+  {
+    "id": "237",
+    "label": "Strong Mana Potion",
+    "category": "Potions"
+  },
+  {
+    "id": "238",
+    "label": "Great Mana Potion",
+    "category": "Potions"
+  },
+  {
+    "id": "239",
+    "label": "Great Health Potion",
+    "category": "Potions"
+  },
+  {
+    "id": "7642",
+    "label": "Great Spirit Potion",
+    "category": "Potions"
+  },
+  {
+    "id": "7643",
+    "label": "Ultimate Health Potion",
+    "category": "Potions"
+  },
+  {
+    "id": "7876",
+    "label": "Small Health Potion",
+    "category": "Potions"
+  },
+  {
+    "id": "7439",
+    "label": "Berserk Potion",
+    "category": "Potions"
+  },
+  {
+    "id": "7440",
+    "label": "Mastermind Potion",
+    "category": "Potions"
+  },
+  {
+    "id": "7443",
+    "label": "Bullseye Potion",
+    "category": "Potions"
+  },
+  {
+    "id": "7644",
+    "label": "Antidote Potion",
+    "category": "Potions"
+  }
+]

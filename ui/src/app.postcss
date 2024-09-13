@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "gg sans";
+  src: url("/fonts/gg sans Medium.ttf"), url("/fonts/gg sans Semibold.ttf"),
+    url("/fonts/gg sans Bold.ttf");
+}
+
+body {
+  font-family: "gg sans";
+}
+
+.main-gradient {
+  background-image: linear-gradient(
+    to bottom,
+    hsla(222, 45%, 21.4%, 1),
+    ease,
+    hsla(222, 44.3%, 12%, 1)
+  );
+}
+
+.scroller {
+  scrollbar-color-track: #ffffff !important;
+  --scrollbar-color-thumb: #ff69b4;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+  .hide-scrollbar {
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+/* === Hide Scrollbars === */
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.prism-code-editor {
+  --editor__bg: #ffffff;
+}
