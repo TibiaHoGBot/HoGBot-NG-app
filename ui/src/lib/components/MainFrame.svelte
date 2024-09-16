@@ -7,11 +7,12 @@
     generateShortUUID,
     isPersistenceRuleNode,
   } from "$lib/helpers/functions";
-  import type {
-    IHealthRuleNode,
-    IPersistenceRuleNode,
-    ITargetingRuleNode,
-    ITreeNode,
+  import {
+    ENodeTypes,
+    type IHealthRuleNode,
+    type IPersistenceRuleNode,
+    type ITargetingRuleNode,
+    type ITreeNode,
   } from "$lib/helpers/types";
   import { nodeContext, selectedNode, treeActions } from "$lib/stores";
 
@@ -28,20 +29,22 @@
       id: "723z",
       label: "Targeting Rules",
       children: [],
-      childrenType: "ITargetingRuleNode",
-      expanded: false,
+      childrenType: ENodeTypes["ITargetingRuleNode"],
+      expanded: true,
+      type: ENodeTypes["ITreeNode"],
     },
-  
   ];
 
-  const healerRules: (ITreeNode | IHealthRuleNode)[] = [
+  const healerRules: [ITreeNode, ...IHealthRuleNode[]] = [
     {
       id: "74",
       label: "Heal Rules",
-      childrenType: "IHealthRuleNode",
+      childrenType: ENodeTypes["IHealthRuleNode"],
       expanded: true,
+      type: ENodeTypes["ITreeNode"],
     },
     {
+      type: ENodeTypes["IHealthRuleNode"],
       id: "62",
       parentId: "74",
       label: "Health Potion",
@@ -56,6 +59,7 @@
       },
     },
     {
+      type: ENodeTypes["IHealthRuleNode"],
       id: "63",
       parentId: "74",
       label: "Mana Potion",
@@ -69,47 +73,14 @@
         extraCondition: "0",
       },
     },
-    {
-      id: "dfg33",
-      label: "Test Node",
-      childrenType: "IHealthRuleNode",
-      parentId: "74",
-    },
-    {
-      id: "xsdfg2",
-      parentId: "dfg33",
-      label: "GHP",
-      value: {
-        enabled: false,
-        method: "268",
-        mpMin: 50,
-        mpMax: 80,
-        hpMin: 0,
-        hpMax: 100,
-        extraCondition: "0",
-      },
-    },
-    {
-      id: "zzzdffg3",
-      parentId: "dfg33",
-      label: "UHP",
-      value: {
-        enabled: false,
-        method: "268",
-        mpMin: 50,
-        mpMax: 80,
-        hpMin: 0,
-        hpMax: 100,
-        extraCondition: "0",
-      },
-    },
   ];
 
   for (let i = 0; i < 1000; ++i) {
-    healerRules.push({
+    const n: IHealthRuleNode = {
       id: generateShortUUID(),
       parentId: "74",
       label: `TestNode - ${i}`,
+      type: ENodeTypes["IHealthRuleNode"],
       value: {
         enabled: false,
         method: "268",
@@ -119,12 +90,19 @@
         hpMax: 100,
         extraCondition: "0",
       },
-    });
+    };
+    healerRules.push(n);
   }
 
-  const persistencesRules: (ITreeNode | IPersistenceRuleNode)[] = [
-    { id: "213", label: "Persistences", childrenType: "IPersistenceRuleNode" },
+  const persistencesRules: [ITreeNode, ...IPersistenceRuleNode[]] = [
     {
+      id: "213",
+      label: "Persistences",
+      childrenType: ENodeTypes["IPersistenceRuleNode"],
+      type: ENodeTypes["ITreeNode"],
+    },
+    {
+      type: ENodeTypes["IPersistenceRuleNode"],
       id: "612",
       parentId: "213",
       label: "Auto Haste",
@@ -176,7 +154,7 @@
   };
 
   const unselectNode = () => {
-    if ($selectedNode?.selected) {
+    if ($selectedNode && $selectedNode.selected) {
       $selectedNode.selected = false;
     }
 

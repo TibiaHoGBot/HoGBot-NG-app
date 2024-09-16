@@ -1,5 +1,15 @@
-import type { IHealthRuleNode, IPersistenceRuleNode, ITargetingRuleNode, ITargetingSettingsRuleNode, ITreeNode } from "./types";
+import { ENodeTypes, type IHealthRuleNode, type IPersistenceRuleNode, type ITargetingRuleNode, type ITargetingSettingsRuleNode, type ITreeNode } from "./types";
 
+export function keyValToItems<T extends Record<any, any>>(keyval: T, category: string): Array<{ id: keyof T; label: T[keyof T], category: string }>;
+export function keyValToItems<T extends Record<any, any>>(keyval: T): Array<{ id: keyof T; label: T[keyof T] }>;
+export function keyValToItems<T extends Record<any, any>>(keyval: T, category?: string) {
+  return Object.keys(keyval).map(key => {
+    const k = key as keyof T;
+    return category
+      ? { id: k, label: keyval[k], category }
+      : { id: k, label: keyval[k] };
+  });
+}
 export const generateShortUUID = () => {
   return Math.random().toString(36).substring(2, 10);
 }
@@ -52,10 +62,13 @@ export const isTargetingSettingRuleNode = (node: any): node is ITargetingSetting
 
 export const createTargetingRuleNode = (parentNodeId: string, nodeId: string, childrenNodeId: string): ITargetingRuleNode => {
   return {
+    type: ENodeTypes["ITargetingRuleNode"],
     id: nodeId,
     label: `${nodeId} - Node`,
+    childrenType: ENodeTypes["ITargetingSettingsRuleNode"],
     children: [
       {
+        type: ENodeTypes["ITargetingSettingsRuleNode"],
         id: childrenNodeId,
         label: `${childrenNodeId} - Node`,
         value: {
@@ -67,9 +80,12 @@ export const createTargetingRuleNode = (parentNodeId: string, nodeId: string, ch
           desiredDistance: "0",
           desiredStance: "0",
           firstSpell: "0",
+          secondSpell: "0",
+          thirdSpell: "0",
+          lureSpell: "0",
           syncSpells: false,
-        }
-
+        },
+        parentId: nodeId
       }
     ],
     value: {
@@ -86,4 +102,59 @@ export const createTargetingRuleNode = (parentNodeId: string, nodeId: string, ch
 
     parentId: parentNodeId,
   };
+}
+
+export const createHealthRuleNode = (parentNodeId: string, nodeId: string): IHealthRuleNode => {
+  return {
+    type: ENodeTypes["IHealthRuleNode"],
+    id: nodeId,
+    label: `${nodeId} - Node`,
+    value: {
+      enabled: false,
+      hpMin: 0,
+      hpMax: 0,
+      mpMin: 0,
+      mpMax: 0,
+      method: "266",
+      extraCondition: "0"
+    },
+
+    parentId: parentNodeId,
+  }
+}
+
+export const createPersistenceRuleNode = (parentNodeId: string, nodeId: string): IPersistenceRuleNode => {
+  return {
+    type: ENodeTypes["IPersistenceRuleNode"],
+    id: nodeId,
+    label: `${nodeId} - Node`,
+    value: {
+      enabled: false,
+      code: "auto(1000)",
+    },
+    parentId: parentNodeId,
+  }
+}
+
+export const createTargetingSettingsRuleNode = (parentNodeId: string, nodeId: string): ITargetingSettingsRuleNode => {
+  return {
+    type: ENodeTypes["ITargetingSettingsRuleNode"],
+    id: nodeId,
+    label: `${nodeId} - Node`,
+    value: {
+      enabled: false,
+      hpMin: 0,
+      hpMax: 100,
+      attackAvoidance: "0",
+      attackMode: "0",
+      desiredDistance: "0",
+      desiredStance: "0",
+      firstSpell: "0",
+      secondSpell: "0",
+      thirdSpell: "0",
+      lureSpell: "0",
+      syncSpells: false,
+    },
+    parentId: parentNodeId
+  }
 }

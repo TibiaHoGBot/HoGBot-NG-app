@@ -82,19 +82,30 @@ export type ISwitchSelectProps<T extends UTargetingSettingKeys> = {
 
 // *** Node Types *** //
 
-export type INodeTypes = "ITreeNode" | "IHealthRuleNode" | "IPersistenceRuleNode" | "ITargetingRuleNode"
+export type UNodeTypes = (ITreeNode | IHealthRuleNode | IPersistenceRuleNode | ITargetingRuleNode | ITargetingSettingsRuleNode)
 
-export interface ITreeNode {
+export const ENodeTypes = {
+  "ITreeNode": 0,
+  "IHealthRuleNode": 1,
+  "ICavebotRuleNode": 2,
+  "IPersistenceRuleNode": 3,
+  "ITargetingRuleNode": 4,
+  "ITargetingSettingsRuleNode": 5
+} as const
+
+export type ITreeNode = {
   id: string;
   label: string;
   parentId?: string;
   expanded?: boolean;
   selected?: boolean;
-  children?: (ITreeNode)[];
-  childrenType?: INodeTypes
+  children: (IHealthRuleNode | IPersistenceRuleNode | ITargetingRuleNode | ITargetingSettingsRuleNode)[];
+  childrenType: typeof ENodeTypes[keyof typeof ENodeTypes];
+  type: typeof ENodeTypes["ITreeNode"];
 }
 
-export type IHealthRuleNode = ITreeNode & {
+export type IHealthRuleNode = Omit<ITreeNode, "children" | "childrenType" | "type"> & {
+  type: typeof ENodeTypes["IHealthRuleNode"],
   value: {
     enabled: boolean;
     method: string,
@@ -106,15 +117,18 @@ export type IHealthRuleNode = ITreeNode & {
   }
 }
 
-export type IPersistenceRuleNode = ITreeNode & {
+export type IPersistenceRuleNode = Omit<ITreeNode, "children" | "childrenType" | "type"> & {
+  type: typeof ENodeTypes["IPersistenceRuleNode"],
   value: {
     enabled: boolean;
     code: string
   }
 }
 
-export type ITargetingRuleNode = Omit<ITreeNode, "children"> & {
-  children: ITargetingSettingsRuleNode[]
+export type ITargetingRuleNode = Omit<ITreeNode, "children" | "childrenType" | "type"> & {
+  type: typeof ENodeTypes["ITargetingRuleNode"],
+  children: ITargetingSettingsRuleNode[],
+  childrenType: typeof ENodeTypes["ITargetingSettingsRuleNode"],
   value: {
     name: string;
     count: number;
@@ -128,7 +142,8 @@ export type ITargetingRuleNode = Omit<ITreeNode, "children"> & {
   }
 }
 
-export type ITargetingSettingsRuleNode = Omit<ITreeNode, "children" | "expanded"> & {
+export type ITargetingSettingsRuleNode = Omit<ITreeNode, "children" | "childrenType" | "expanded" | "type"> & {
+  type: typeof ENodeTypes["ITargetingSettingsRuleNode"],
   value: {
     enabled: boolean;
     hpMin: number;
@@ -139,8 +154,9 @@ export type ITargetingSettingsRuleNode = Omit<ITreeNode, "children" | "expanded"
     desiredDistance: keyof typeof EDesiredDistance;
     syncSpells: boolean;
     firstSpell: string;
-    secondSpell?: string;
-    thirdSpell?: string
+    secondSpell: string;
+    thirdSpell: string;
+    lureSpell: string;
   }
 }
 

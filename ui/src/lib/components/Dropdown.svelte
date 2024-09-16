@@ -41,14 +41,6 @@
 
   $effect(() => {
     const label = options.find((obj) => obj["id"] === value)?.label;
-    // console.log(
-    //   "id: ",
-    //   value,
-    //   " label: ",
-    //   label,
-    //   " options: ",
-    //   JSON.stringify(options)
-    // );
     if (!label) return;
 
     selectedOption = {

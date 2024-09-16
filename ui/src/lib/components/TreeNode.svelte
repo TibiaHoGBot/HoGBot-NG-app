@@ -21,7 +21,7 @@
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
     style="padding-left: {pl};"
-    onfocus={(e) => {
+    onfocus={(e) => { 
       e.preventDefault();
     }}
     class:bg-secondary-500={node.id === $selectedNode?.id}
@@ -78,7 +78,9 @@
       e.preventDefault();
 
       if (e.button !== 0 && e.button !== 2) return;
-      
+    
+      if (!$treeActions.onSelect) return;
+  
       $treeActions.onSelect(node);
 
       if (e.button === 0 && parentNode?.children) {
@@ -103,7 +105,7 @@
       >
       <div class="w-0 h-0 translate-x-[10%] border-t-4 border-b-4 border-transparent border-l-8 border-l-white"></div>
       </button>
-    {:else if "value" in node}
+    {:else if "value" in node && "enabled" in node.value}
       <button
       class:pointer-events-none={$draggedNodeInfo}
         onmousedown={(e) => {

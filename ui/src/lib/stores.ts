@@ -1,4 +1,4 @@
-import type { DropInfo, IHealthRuleNode, INodeContext, IPersistenceRuleNode, ITargetingRuleNode, ITargetingSettingsRuleNode, ITreeNode } from "$lib/helpers/types";
+import type { DropInfo, IHealthRuleNode, INodeContext, IPersistenceRuleNode, ITargetingRuleNode, ITargetingSettingsRuleNode, ITreeNode, UNodeTypes } from "$lib/helpers/types";
 import { writable, type Writable } from "svelte/store";
 
 
@@ -9,7 +9,7 @@ export const treeActions: Writable<{
   onSelect: ((node: ITreeNode) => void) | null
   onAdd: ((node: ITreeNode) => void) | null,
   onRemove: ((node: ITreeNode) => void) | null
-  onRename: ((node: ITreeNode | IHealthRuleNode, newLabel: string) => void) | null
+  onRename: ((node: UNodeTypes, newLabel: string) => void) | null
   onDrag: ((parentNode: ITreeNode, newChildren: ITreeNode[]) => void) | null
 }> = writable({
   onUpdate: null,

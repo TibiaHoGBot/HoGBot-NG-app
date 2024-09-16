@@ -1,12 +1,22 @@
 <script lang="ts">
   import TreeNode from "$lib/components/TreeNode.svelte";
-  import { findParentNode, generateShortUUID, createTargetingRuleNode } from "$lib/helpers/functions";
+  import {
+    createHealthRuleNode,
+    createPersistenceRuleNode,
+    createTargetingRuleNode,
+    createTargetingSettingsRuleNode,
+    findParentNode,
+    generateShortUUID,
+  } from "$lib/helpers/functions";
   import type {
     IHealthRuleNode,
     IPersistenceRuleNode,
     ITargetingRuleNode,
+    ITargetingSettingsRuleNode,
     ITreeNode,
+    UNodeTypes,
   } from "$lib/helpers/types";
+  import { ENodeTypes } from "$lib/helpers/types";
   import { nodeContext, selectedNode, treeActions } from "$lib/stores";
   import { onMount } from "svelte";
 
@@ -34,62 +44,41 @@
     selectedNode.set(node);
   };
 
-  const onAdd = (node: ITreeNode) => {
-    let newNode: ITreeNode | IHealthRuleNode | undefined;
+  const onAdd = (node: Extract<UNodeTypes, ITreeNode>) => {
+    let newNode:
+      | Extract<
+          UNodeTypes,
+          | IHealthRuleNode
+          | IPersistenceRuleNode
+          | ITargetingRuleNode
+          | ITargetingSettingsRuleNode
+        >
+      | undefined;
 
     const newId = generateShortUUID();
 
     switch (node.childrenType) {
-      case "IHealthRuleNode":
-        newNode = {
-          id: newId,
-          label: `${newId} - Node`,
-          value: {
-            enabled: false,
-            hpMin: 0,
-            hpMax: 0,
-            mpMin: 0,
-            mpMax: 0,
-            method: "266",
-          },
-
-          parentId: node.id,
-        } as IHealthRuleNode;
-        if (node?.children) {
-          node.children.push(newNode);
-        } else {
-          node["children"] = [newNode];
-        }
+      case ENodeTypes["IHealthRuleNode"]:
+        newNode = createHealthRuleNode(node.id, newId);
         break;
-      case "IPersistenceRuleNode":
-        newNode = {
-          id: newId,
-          label: `${newId} - Node`,
-          value: {
-            enabled: false,
-            code: "auto(1000)",
-          },
-
-          parentId: node.id,
-        } as IPersistenceRuleNode;
-        if (node?.children) {
-          node.children.push(newNode);
-        } else {
-          node["children"] = [newNode];
-        }
+      case ENodeTypes["IPersistenceRuleNode"]:
+        newNode = createPersistenceRuleNode(node.id, newId);
         break;
-
-      case "ITargetingRuleNode":
-        const childId = generateShortUUID()
-        newNode = createTargetingRuleNode(node.id, newId, childId)
-        if (node?.children) {
-          node.children.push(newNode);
-        } else {
-          node["children"] = [newNode];
-        }
+      case ENodeTypes["ITargetingRuleNode"]:
+        const childId = generateShortUUID();
+        newNode = createTargetingRuleNode(node.id, newId, childId);
+        break;
+      case ENodeTypes["ITargetingSettingsRuleNode"]:
+        newNode = createTargetingSettingsRuleNode(node.id, newId);
         break;
       default:
-        break;
+        return;
+    }
+
+    if (node.children?.length) {
+      node.children.push(newNode);
+    } else {
+      node["children"] = [newNode];
     }
   };
 
