@@ -13,6 +13,7 @@
     type IPersistenceRuleNode,
     type ITargetingRuleNode,
     type ITreeNode,
+    type UNodeTypes,
   } from "$lib/helpers/types";
   import { nodeContext, selectedNode, treeActions } from "$lib/stores";
 
@@ -24,7 +25,7 @@
   let isCollapseButtonVisible = $state(false);
   let editorValue = $state("");
 
-  const targetingRules: (ITreeNode | ITargetingRuleNode)[] = [
+  const targetingRules: [ITreeNode, ...ITargetingRuleNode[]] = [
     {
       id: "723z",
       label: "Targeting Rules",
@@ -42,6 +43,7 @@
       childrenType: ENodeTypes["IHealthRuleNode"],
       expanded: true,
       type: ENodeTypes["ITreeNode"],
+      children: [],
     },
     {
       type: ENodeTypes["IHealthRuleNode"],
@@ -100,6 +102,8 @@
       label: "Persistences",
       childrenType: ENodeTypes["IPersistenceRuleNode"],
       type: ENodeTypes["ITreeNode"],
+      children: [],
+      expanded: true,
     },
     {
       type: ENodeTypes["IPersistenceRuleNode"],
@@ -113,9 +117,12 @@
     },
   ];
 
-  let data:
-    | (ITreeNode | IHealthRuleNode)[]
-    | (ITreeNode | IPersistenceRuleNode)[] = $derived.by(() => {
+  type Data =
+    | [ITreeNode, ...IPersistenceRuleNode[]]
+    | [ITreeNode, ...IHealthRuleNode[]]
+    | [ITreeNode, ...ITargetingRuleNode[]];
+
+  let data: Data = $derived.by(() => {
     switch (currentTab) {
       case 2:
         return JSON.parse(JSON.stringify(persistencesRules));
@@ -136,19 +143,21 @@
     return acc;
   });
 
-  let treeData: (ITreeNode | IHealthRuleNode)[] = $state([]);
+  let treeData: ITreeNode[] = $state([]);
 
-  const initTree = (data: (ITreeNode | IHealthRuleNode)[]) => {
-    let tree: (ITreeNode | IHealthRuleNode)[] = [];
+  const initTree = (data: Data) => {
+    let tree: ITreeNode[] = [];
     data.forEach((el) => {
-      if (!el.parentId) {
-        tree[0] = el;
-        return;
+      // Means it's root
+      if (!("parentId" in el)) {
+        tree.push(el as ITreeNode);
+      } else {
+        const parentEl = data[idMapping[el.parentId]];
+
+        if ("children" in parentEl) {
+          parentEl.children = [...(parentEl.children || []), el];
+        }
       }
-
-      const parentEl = data[idMapping[el.parentId]];
-
-      parentEl.children = [...(parentEl.children || []), el];
     });
     treeData = tree;
   };

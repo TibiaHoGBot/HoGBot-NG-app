@@ -1,4 +1,4 @@
-import { ENodeTypes, type IHealthRuleNode, type IPersistenceRuleNode, type ITargetingRuleNode, type ITargetingSettingsRuleNode, type ITreeNode } from "./types";
+import { ENodeTypes, type IHealthRuleNode, type IPersistenceRuleNode, type ITargetingRuleNode, type ITargetingSettingsRuleNode, type ITreeNode, type UNodeTypes } from "./types";
 
 export function keyValToItems<T extends Record<any, any>>(keyval: T, category: string): Array<{ id: keyof T; label: T[keyof T], category: string }>;
 export function keyValToItems<T extends Record<any, any>>(keyval: T): Array<{ id: keyof T; label: T[keyof T] }>;
@@ -17,7 +17,8 @@ export const generateShortUUID = () => {
 export const findParentNode = (
   treeData: ITreeNode[],
   targetParentId: string,
-): ITreeNode | null => {
+): Extract<UNodeTypes, { children: any }> | null => {
+
   for (const node of treeData) {
     if (node.id === targetParentId) {
       return node;
@@ -48,16 +49,24 @@ export const moveItemInArray = (
   return newArr;
 };
 
-export const isHealthRuleNode = (node: any): node is IHealthRuleNode => {
-  return node?.value && 'method' in node.value;
+export const exhaustiveGuard = (_: never): never => {
+  throw new Error("Switch exhaustive error")
 }
 
-export const isPersistenceRuleNode = (node: any): node is IPersistenceRuleNode => {
-  return node?.value && 'code' in node.value;
+export const isHealthRuleNode = (node: UNodeTypes): node is IHealthRuleNode => {
+  return node.type === ENodeTypes["IHealthRuleNode"]
 }
 
-export const isTargetingSettingRuleNode = (node: any): node is ITargetingSettingsRuleNode => {
-  return node?.value && 'attackMode' in node.value;
+export const isPersistenceRuleNode = (node: UNodeTypes): node is IPersistenceRuleNode => {
+  return node.type === ENodeTypes["IPersistenceRuleNode"]
+}
+
+export const isTargetingSettingRuleNode = (node: UNodeTypes): node is ITargetingSettingsRuleNode => {
+  return node.type === ENodeTypes["ITargetingRuleNode"]
+}
+
+export const hasEnabledField = (node: UNodeTypes): node is Extract<UNodeTypes, { value: { enabled: boolean } }> => {
+  return "value" in node && "enabled" in node.value
 }
 
 export const createTargetingRuleNode = (parentNodeId: string, nodeId: string, childrenNodeId: string): ITargetingRuleNode => {

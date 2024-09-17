@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { hasEnabledField } from "$lib/helpers/functions";
   import { m, nodeContext, selectedNode, treeActions } from "$lib/stores";
 
   let items = $derived.by(() => {
@@ -31,7 +32,7 @@
       items.push(newItem);
     }
 
-    if ($selectedNode && "value" in $selectedNode) {
+    if ($selectedNode && hasEnabledField($selectedNode)) {
       const newItem = {
         label: $selectedNode.value.enabled ? "Disable" : "Enable",
         shortcut: "Ctrl+E",

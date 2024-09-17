@@ -96,15 +96,15 @@ export const ENodeTypes = {
 export type ITreeNode = {
   id: string;
   label: string;
-  parentId?: string;
   expanded?: boolean;
   selected?: boolean;
-  children: (IHealthRuleNode | IPersistenceRuleNode | ITargetingRuleNode | ITargetingSettingsRuleNode)[];
-  childrenType: typeof ENodeTypes[keyof typeof ENodeTypes];
+  children: Exclude<UNodeTypes, ITargetingSettingsRuleNode>[];
+  childrenType: Exclude<typeof ENodeTypes[keyof typeof ENodeTypes], 0>;
   type: typeof ENodeTypes["ITreeNode"];
 }
 
-export type IHealthRuleNode = Omit<ITreeNode, "children" | "childrenType" | "type"> & {
+export type IHealthRuleNode = Omit<ITreeNode, "children" | "childrenType" | "type" | "expanded"> & {
+  parentId: string;
   type: typeof ENodeTypes["IHealthRuleNode"],
   value: {
     enabled: boolean;
@@ -117,7 +117,8 @@ export type IHealthRuleNode = Omit<ITreeNode, "children" | "childrenType" | "typ
   }
 }
 
-export type IPersistenceRuleNode = Omit<ITreeNode, "children" | "childrenType" | "type"> & {
+export type IPersistenceRuleNode = Omit<ITreeNode, "children" | "childrenType" | "type" | "expanded"> & {
+  parentId: string;
   type: typeof ENodeTypes["IPersistenceRuleNode"],
   value: {
     enabled: boolean;
@@ -126,6 +127,7 @@ export type IPersistenceRuleNode = Omit<ITreeNode, "children" | "childrenType" |
 }
 
 export type ITargetingRuleNode = Omit<ITreeNode, "children" | "childrenType" | "type"> & {
+  parentId: string;
   type: typeof ENodeTypes["ITargetingRuleNode"],
   children: ITargetingSettingsRuleNode[],
   childrenType: typeof ENodeTypes["ITargetingSettingsRuleNode"],
@@ -143,6 +145,7 @@ export type ITargetingRuleNode = Omit<ITreeNode, "children" | "childrenType" | "
 }
 
 export type ITargetingSettingsRuleNode = Omit<ITreeNode, "children" | "childrenType" | "expanded" | "type"> & {
+  parentId: string;
   type: typeof ENodeTypes["ITargetingSettingsRuleNode"],
   value: {
     enabled: boolean;
