@@ -111,7 +111,7 @@
         value={selectedNode.value[fieldName] ?? "None"}
         dropdownOptions={{
           options: spellList,
-          onSelectItem: (itemId: string) => {
+          onSelectItem: (itemId) => {
             if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
             $treeActions.onUpdate(selectedNode, { ...selectedNode.value, [fieldName]: itemId });
           },

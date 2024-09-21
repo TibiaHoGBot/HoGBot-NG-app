@@ -8,8 +8,8 @@
     onSelectItem,
   }: {
     items: IDropdownItem[];
-    selectedItemId: string;
-    onSelectItem: (itemId: string) => void;
+    selectedItemId: string | number;
+    onSelectItem: (itemId: string | number) => void;
   } = $props();
 
   let searchPhrase = $state("");

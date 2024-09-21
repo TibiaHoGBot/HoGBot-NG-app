@@ -36,8 +36,8 @@
         const parsed: IDropdownItem[] = result.output;
         return parsed;
       })(),
-      onSelectItem: (itemId: string) => {
-        if (!isHealthRuleNode(selectedNode) || !$treeActions.onUpdate) return;
+      onSelectItem: (itemId) => {
+        if (!isHealthRuleNode(selectedNode) || !$treeActions.onUpdate || typeof itemId !== "string") return;
         $treeActions.onUpdate(selectedNode, { ...selectedNode.value, method: itemId });
       },
     }}
@@ -95,18 +95,10 @@
   <Dropdown
     value={selectedNode.value.extraCondition}
     dropdownOptions={{
-        options: keyValToItems({
-          "0": "None",
-          "1": "Bleeding",
-          "2": "Burning",
-          "3": "Cursed",
-          "4": "Electrified",
-          "5": "Paralyzed",
-          "6": "Poisoned",
-          }, "Status"),
-        onSelectItem: (itemId: string) => {
-          const id = itemId  as keyof typeof EHealthRuleExtraCondition 
-          if (!isHealthRuleNode(selectedNode) || !$treeActions.onUpdate || !EHealthRuleExtraCondition[id]) return;
+        options: keyValToItems(EHealthRuleExtraCondition, "Status"),
+        onSelectItem: (itemId) => {
+          const id = itemId  as typeof EHealthRuleExtraCondition[keyof typeof EHealthRuleExtraCondition] 
+          if (!isHealthRuleNode(selectedNode) || !$treeActions.onUpdate) return;
           $treeActions.onUpdate(selectedNode, { ...selectedNode.value, extraCondition: id });
         },
       }}

@@ -19,7 +19,7 @@
   let selectedOption:
     | {
         label: string;
-        value: string;
+        value: string | number;
       }
     | undefined = $state(undefined);
 

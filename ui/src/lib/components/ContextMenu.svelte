@@ -2,10 +2,15 @@
   import { hasEnabledField } from "$lib/helpers/functions";
   import { m, nodeContext, selectedNode, treeActions } from "$lib/stores";
 
-  let items = $derived.by(() => {
+  let items: {
+    label: string;
+    shortcut: string;
+    divider?: boolean;
+    eventHandler: (_e: MouseEvent) => void;
+  }[] = $derived.by(() => {
     const items = [];
 
-    if ($selectedNode && $selectedNode.parentId) {
+    if ($selectedNode && "parentId" in $selectedNode) {
       const newItem = {
         label: "Remove Node",
         shortcut: "Del",

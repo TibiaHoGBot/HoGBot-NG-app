@@ -54,7 +54,7 @@ export type IDropdownProps = {
 };
 
 export type IDropdownItem = {
-  id: string;
+  id: string | number;
   label: string;
   category: string;
   icon?: string;
@@ -62,7 +62,7 @@ export type IDropdownItem = {
 
 export type IDropdownMeta = {
   options: IDropdownItem[];
-  selectedId: string;
+  selectedId: string | number;
   onSelectItem: (itemId: IDropdownItem["id"]) => void;
 }
 
