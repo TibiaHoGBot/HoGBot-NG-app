@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
   import {
     createHealthRuleNode,
     createPersistenceRuleNode,
@@ -7,16 +9,18 @@
     exhaustiveGuard,
     findParentNode,
     generateShortUUID,
-    isAbleToAddChildren,
   } from "$lib/helpers/functions";
   import type {
     DropInfo,
+    ICavebotRuleNode,
     IHealthRuleNode,
     IPersistenceRuleNode,
     ITargetingRuleNode,
     ITargetingSettingsRuleNode,
-    ITreeNode,
-    UNodeTypes,
+    UNodeChildren,
+    UNodeRoots,
+    UNodeRules,
+    UNodes,
   } from "$lib/helpers/types";
   import { ENodeTypes } from "$lib/helpers/types";
   import {
@@ -27,92 +31,83 @@
     nodeContext,
     selectedNode,
     treeActions,
+    type FOnAdd,
+    type FOnDrag,
+    type FOnEnable,
+    type FOnRemove,
+    type FOnRename,
+    type FOnSelect,
+    type FOnToggle,
+    type FOnUpdate,
   } from "$lib/stores";
-  import { onMount } from "svelte";
+
   import type {
     FHandleDragOver,
     FHandleEnableNode,
     FHandleSelectNode,
-  } from "./TreeNode.svelte";
-  import TreeNode from "./TreeNode.svelte";
+  } from "$lib/components/TreeNode.svelte";
+  import TreeNode from "$lib/components/TreeNode.svelte";
 
   let {
     treeData = $bindable(),
   }: {
-    treeData: ITreeNode[];
+    treeData: UNodeRoots[];
   } = $props();
 
-  const onToggle = (
-    node: Extract<
-      UNodeTypes,
-      {
-        children: any;
-      }
-    >
-  ) => {
-    if (!node.children) return;
-
+  const onToggle: FOnToggle = (node) => {
     node.expanded = !node.expanded;
   };
 
-  const onEnable = (
-    node: Extract<
-      UNodeTypes,
-      {
-        value: {
-          enabled: boolean;
-        };
-      }
-    >
-  ) => {
-    if (!node.value) return;
-
+  const onEnable: FOnEnable = (node) => {
     node.value.enabled = !node.value.enabled;
   };
 
-  const onSelect = (node: UNodeTypes) => {
+  const onSelect: FOnSelect = (node) => {
     if ($selectedNode && $selectedNode.id === node.id) return;
     nodeContext.set(undefined);
     selectedNode.set(node);
   };
 
-  const onAdd = (node: Extract<UNodeTypes, ITreeNode | ITargetingRuleNode>) => {
+  const onAdd: FOnAdd = (node) => {
     const newId = generateShortUUID();
+    const cType = node.childrenType;
 
-    const createChildrenNode = (
-      node: Extract<UNodeTypes, ITreeNode | ITargetingRuleNode>
-    ) => {
-      switch (node.childrenType) {
-        case ENodeTypes["IHealthRuleNode"]:
-          return createHealthRuleNode(node.id, newId);
-        case ENodeTypes["ICavebotRuleNode"]:
-          return;
-        case ENodeTypes["IPersistenceRuleNode"]:
-          return createPersistenceRuleNode(node.id, newId);
-        case ENodeTypes["ITargetingRuleNode"]:
-          const childId = generateShortUUID();
-          return createTargetingRuleNode(node.id, newId, childId);
-        case ENodeTypes["ITargetingSettingsRuleNode"]:
-          return createTargetingSettingsRuleNode(node.id, newId);
-        default:
-          return exhaustiveGuard(node.childrenType);
+    switch (cType) {
+      case ENodeTypes["HealthRuleNode"]: {
+        if (node.type !== ENodeTypes["HealthRootNode"]) return;
+        const newNode = createHealthRuleNode(node.id, newId);
+        node.children.push(newNode);
+        break;
       }
-    };
-
-    let newNode = createChildrenNode(node);
-
-    if (!newNode || node.childrenType !== newNode.type) return;
-
-    if (node.children?.length) {
-      node.children.push(newNode);
-    } else {
-      node["children"] = [newNode];
+      case ENodeTypes["CavebotRuleNode"]: {
+        if (node.type !== ENodeTypes["CavebotRootNode"]) return;
+        break;
+      }
+      case ENodeTypes["PersistenceRuleNode"]: {
+        if (node.type !== ENodeTypes["PersistenceRootNode"]) return;
+        const newNode = createPersistenceRuleNode(node.id, newId);
+        node.children.push(newNode);
+        break;
+      }
+      case ENodeTypes["TargetingRuleNode"]: {
+        if (node.type !== ENodeTypes["TargetingRootNode"]) return;
+        const childId = generateShortUUID();
+        const newNode = createTargetingRuleNode(node.id, newId, childId);
+        node.children.push(newNode);
+        break;
+      }
+      case ENodeTypes["TargetingSettingsRuleNode"]: {
+        if (node.type !== ENodeTypes["TargetingRuleNode"]) return;
+        const newNode = createTargetingSettingsRuleNode(node.id, newId);
+        node.children.push(newNode);
+        break;
+      }
+      default:
+        exhaustiveGuard(cType);
     }
   };
 
-  const onRemove = (node: Exclude<UNodeTypes, ITreeNode>) => {
-    if (!node.parentId) return;
-
+  const onRemove: FOnRemove = (node) => {
     const parentNode = findParentNode(treeData, node.parentId);
 
     if ("children" in node) {
@@ -120,31 +115,22 @@
     }
 
     if (parentNode) {
-      parentNode.children = parentNode.children?.filter(
-        (ch) => ch.id !== node.id
-      );
-
+      parentNode.children = parentNode.children?.filter((ch) => {
+        return ch.id !== node.id;
+      }) as typeof parentNode.children;
       selectedNode.set(undefined);
     }
   };
 
-  const onRename = (node: UNodeTypes, newLabel: string) => {
+  const onRename: FOnRename = (node, newLabel) => {
     node.label = newLabel;
   };
 
-  const onDrag = (
-    parentNode: Extract<UNodeTypes, { children: any }>,
-    newChildren: Exclude<UNodeTypes, ITreeNode>[]
-  ) => {
+  const onDrag: FOnDrag = (parentNode, newChildren) => {
     parentNode.children = newChildren;
   };
 
-  const onUpdate = <
-    T extends Extract<UNodeTypes, { value: Record<string, any> }>,
-  >(
-    node: T,
-    newValue: T["value"]
-  ) => {
+  const onUpdate: FOnUpdate = (node, newValue) => {
     node.value = newValue;
   };
 

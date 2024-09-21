@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "prism-code-editor": "^3.4.0",
-    "uninstall": "^0.0.0",
     "valibot": "^0.41.0"
   }
 }

@@ -3,26 +3,26 @@
     e: MouseEvent & {
         currentTarget: EventTarget & HTMLDivElement;
       },
-    node: UNodeTypes,
-    parentNode: Extract<UNodeTypes, { children: any }> | undefined
+    node: UNodes,
+    parentNode: Extract<UNodes, { children: any }> | undefined
   ) => void
 
   export type FHandleDragOver = (
     e: MouseEvent & {
         currentTarget: EventTarget & HTMLDivElement;
       },
-    node: UNodeTypes,
-    parentNode: Extract<UNodeTypes, { children: any }> | undefined
+    node: UNodes,
+    parentNode: Extract<UNodes, { children: any }> | undefined
   ) => void
 
   export type FHandleEnableNode= (e: MouseEvent & {
     currentTarget: EventTarget & HTMLButtonElement;
-  }, node: Extract<UNodeTypes, {value: {enabled: boolean}}>) => void;
+  }, node: Extract<UNodes, {value: {enabled: boolean}}>) => void;
 
   export type ITreeNodeProps = {
-    node: UNodeTypes;
+    node: UNodes;
     depth: number;
-    parentNode: Extract<UNodeTypes, ITreeNode | ITargetingRuleNode> | undefined;
+    parentNode: Extract<UNodes, UNodeRoots | ITargetingRuleNode> | undefined;
     handleDragOver: FHandleDragOver
     handleSelectNode: FHandleSelectNode;
     handleEnableNode: FHandleEnableNode;
@@ -31,8 +31,7 @@
 
 <script lang="ts">
   import { hasEnabledField } from '$lib/helpers/functions';
-
-  import type { ITargetingRuleNode, ITreeNode, UNodeTypes } from '$lib/helpers/types';
+  import type { ITargetingRuleNode, UNodeRoots, UNodes } from '$lib/helpers/types';
   import { draggedNodeInfo, dropInfo, m, nodeContext, selectedNode, treeActions } from '$lib/stores';
   
   let {

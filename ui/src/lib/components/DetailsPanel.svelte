@@ -114,18 +114,18 @@
         {/if}
       </div>
     </div>
-    {#if $selectedNode?.type === ENodeTypes["IPersistenceRuleNode"]}
+    {#if $selectedNode?.type === ENodeTypes["PersistenceRuleNode"]}
       <PersistenceRuleDetails selectedNode={$selectedNode} {editorValue} />
-    {:else if $selectedNode.type === ENodeTypes["IHealthRuleNode"]}
+    {:else if $selectedNode.type === ENodeTypes["HealthRuleNode"]}
       <HealthRuleDetails
         selectedNode={$selectedNode}
         {validateKeypress}
         {handleFocusIn}
         {handleFocusOut}
       />
-    {:else if $selectedNode?.type === ENodeTypes["ITargetingRuleNode"]}
+    {:else if $selectedNode?.type === ENodeTypes["TargetingRuleNode"]}
       <TargetingRuleDetails selectedNode={$selectedNode} />
-    {:else if $selectedNode?.type === ENodeTypes["ITargetingSettingsRuleNode"]}
+    {:else if $selectedNode?.type === ENodeTypes["TargetingSettingsRuleNode"]}
       <TargetingSettingsRuleDetails
         selectedNode={$selectedNode}
         {validateKeypress}

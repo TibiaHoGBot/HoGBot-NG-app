@@ -1,0 +1,64 @@
+{
+  "hogSettings": {
+    "healer": [
+      {
+        "id": "1",
+        "label": "HealRules",
+        "selected": false,
+        "expanded": true,
+        "childrenType": 10,
+        "children": [
+          {
+            "id": "2",
+            "label": "Mana Potion",
+            "parentId": "1",
+            "type": 10,
+            "value": {
+              "enabled": false,
+              "method": "266",
+              "mpMin": 20,
+              "mpMax": 100,
+              "hpMin": 0,
+              "hpMax": 80,
+              "extraCondition": 0
+            }
+          }
+        ],
+        "type": 0
+      }
+    ],
+    "cavebot": [
+      {
+        "id": "3",
+        "label": "Cavebot Rules",
+        "selected": false,
+        "expanded": true,
+        "childrenType": 11,
+        "children": [],
+        "type": 1
+      }
+    ],
+    "persistences": [
+      {
+        "id": "4",
+        "label": "Persistence Rules",
+        "selected": false,
+        "expanded": true,
+        "childrenType": 12,
+        "children": [],
+        "type": 2
+      }
+    ],
+    "targeting": [
+      {
+        "id": "5",
+        "label": "Targeting Rules",
+        "selected": false,
+        "expanded": true,
+        "childrenType": 13,
+        "children": [],
+        "type": 3
+      }
+    ]
+  }
+}

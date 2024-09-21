@@ -1,43 +1,43 @@
 export const EHealthRuleExtraCondition = {
-  "0": "None",
-  "1": "Bleeding",
-  "2": "Burning",
-  "3": "Cursed",
-  "4": "Electrified",
-  "5": "Paralyzed",
-  "6": "Poisoned"
+  "None": 0,
+  "Bleeding": 1,
+  "Burning": 2,
+  "Cursed": 3,
+  "Electrified": 4,
+  "Paralyzed": 5,
+  "Poisoned": 6
 } as const;
 
 export const EAttackSettings = {
-  "0": "None",
-  "1": "Offensive/Stand",
-  "2": "Offensive/Chase",
-  "3": "Balanced/Stand",
-  "4": "Balanced/Chase",
-  "5": "Defensive/Stand",
-  "6": "Defensive/Chase"
+  "None": 0,
+  "Offensive/Stand": 1,
+  "Offensive/Chase": 2,
+  "Balanced/Stand": 3,
+  "Balanced/Chase": 4,
+  "Defensive/Stand": 5,
+  "Defensive/Chase": 6
 } as const
 
 export const EAttackAvoidance = {
-  "0": "None",
-  "1": "Avoid Beams",
-  "2": "Avoid Waves"
+  "None": 0,
+  "Avoid Beams": 1,
+  "Avoid Waves": 2
 } as const
 
 export const EDesiredStance = {
-  "0": "None",
-  "1": "Stand",
-  "2": "Approach",
-  "3": "Lure & Stand",
-  "4": "Lure & Approach",
-  "5": "Lure & Distance",
+  "None": 0,
+  "Stand": 1,
+  "Approach": 2,
+  "Lure & Stand": 3,
+  "Lure & Approach": 4,
+  "Lure & Distance": 5,
 } as const
 
 export const EDesiredDistance = {
-  "0": "None",
-  "1": "Short",
-  "2": "Mid",
-  "3": "Long"
+  "None": 0,
+  "Short": 1,
+  "Mid": 2,
+  "Long": 3
 } as const
 
 
@@ -68,7 +68,7 @@ export type IDropdownMeta = {
 
 // *** Switch Types *** //
 
-export type UTargetingSettingKeys = keyof typeof EAttackSettings | keyof typeof EAttackAvoidance | keyof typeof EDesiredDistance | keyof typeof EDesiredStance
+export type UTargetingSettingKeys = typeof EAttackSettings[keyof typeof EAttackSettings] | typeof EAttackAvoidance[keyof typeof EAttackAvoidance] | typeof EDesiredDistance[keyof typeof EDesiredDistance] | typeof EDesiredStance[keyof typeof EDesiredStance]
 
 export type ISwitchSelectProps<T extends UTargetingSettingKeys> = {
   value: T;
@@ -82,30 +82,70 @@ export type ISwitchSelectProps<T extends UTargetingSettingKeys> = {
 
 // *** Node Types *** //
 
-export type UNodeTypes = (ITreeNode | IHealthRuleNode | IPersistenceRuleNode | ITargetingRuleNode | ITargetingSettingsRuleNode)
+export type UNodeRoots = IHealthRootNode | ICavebotRootNode | IPersistenceRootNode | ITargetingRootNode
+export type UNodeRules = IHealthRuleNode | ICavebotRuleNode | IPersistenceRuleNode | ITargetingRuleNode | ITargetingSettingsRuleNode
+export type UNodes = UNodeRoots | UNodeRules
+export type UNodeChildren = IHealthRuleNode[] | ICavebotRuleNode[] | IPersistenceRuleNode[] | ITargetingRuleNode[] | ITargetingSettingsRuleNode[]
 
 export const ENodeTypes = {
-  "ITreeNode": 0,
-  "IHealthRuleNode": 1,
-  "ICavebotRuleNode": 2,
-  "IPersistenceRuleNode": 3,
-  "ITargetingRuleNode": 4,
-  "ITargetingSettingsRuleNode": 5
+  "HealthRootNode": 0,
+  "CavebotRootNode": 1,
+  "PersistenceRootNode": 2,
+  "TargetingRootNode": 3,
+  "HealthRuleNode": 10,
+  "CavebotRuleNode": 11,
+  "PersistenceRuleNode": 12,
+  "TargetingRuleNode": 13,
+  "TargetingSettingsRuleNode": 14
 } as const
 
 export type ITreeNode = {
   id: string;
   label: string;
-  expanded?: boolean;
   selected?: boolean;
-  children: Exclude<UNodeTypes, ITargetingSettingsRuleNode>[];
-  childrenType: Exclude<typeof ENodeTypes[keyof typeof ENodeTypes], 0>;
-  type: typeof ENodeTypes["ITreeNode"];
 }
 
-export type IHealthRuleNode = Omit<ITreeNode, "children" | "childrenType" | "type" | "expanded"> & {
+
+export type IScript = {
+  hogSettings: {
+    healer: IHealthRootNode[],
+    cavebot: ICavebotRootNode[],
+    persistences: IPersistenceRootNode[],
+    targeting: ITargetingRootNode[]
+  }
+}
+
+export type IHealthRootNode = ITreeNode & {
+  expanded: boolean;
+  childrenType: typeof ENodeTypes["HealthRuleNode"];
+  children: IHealthRuleNode[]
+  type: typeof ENodeTypes["HealthRootNode"]
+}
+
+export type ICavebotRootNode = ITreeNode & {
+  expanded: boolean;
+  childrenType: typeof ENodeTypes["CavebotRuleNode"];
+  children: ICavebotRuleNode[]
+  type: typeof ENodeTypes["CavebotRootNode"]
+}
+
+export type IPersistenceRootNode = ITreeNode & {
+  expanded: boolean;
+  childrenType: typeof ENodeTypes["PersistenceRuleNode"];
+  children: IPersistenceRuleNode[]
+  type: typeof ENodeTypes["PersistenceRootNode"]
+}
+
+export type ITargetingRootNode = ITreeNode & {
+  expanded: boolean;
+  childrenType: typeof ENodeTypes["TargetingRuleNode"];
+  children: ITargetingRuleNode[]
+  type: typeof ENodeTypes["TargetingRootNode"]
+}
+
+
+export type IHealthRuleNode = ITreeNode & {
   parentId: string;
-  type: typeof ENodeTypes["IHealthRuleNode"],
   value: {
     enabled: boolean;
     method: string,
@@ -113,24 +153,34 @@ export type IHealthRuleNode = Omit<ITreeNode, "children" | "childrenType" | "typ
     mpMax: number;
     hpMin: number;
     hpMax: number;
-    extraCondition: keyof typeof EHealthRuleExtraCondition
+    extraCondition: typeof EHealthRuleExtraCondition[keyof typeof EHealthRuleExtraCondition]
+  }
+  type: typeof ENodeTypes["HealthRuleNode"],
+}
+
+export type ICavebotRuleNode = ITreeNode & {
+  parentId: string;
+  type: typeof ENodeTypes["CavebotRuleNode"];
+  value: {
+
   }
 }
 
-export type IPersistenceRuleNode = Omit<ITreeNode, "children" | "childrenType" | "type" | "expanded"> & {
+export type IPersistenceRuleNode = ITreeNode & {
   parentId: string;
-  type: typeof ENodeTypes["IPersistenceRuleNode"],
+  type: typeof ENodeTypes["PersistenceRuleNode"],
   value: {
     enabled: boolean;
     code: string
   }
 }
 
-export type ITargetingRuleNode = Omit<ITreeNode, "children" | "childrenType" | "type"> & {
+export type ITargetingRuleNode = ITreeNode & {
+  expanded: boolean;
   parentId: string;
-  type: typeof ENodeTypes["ITargetingRuleNode"],
+  type: typeof ENodeTypes["TargetingRuleNode"],
+  childrenType: typeof ENodeTypes["TargetingSettingsRuleNode"],
   children: ITargetingSettingsRuleNode[],
-  childrenType: typeof ENodeTypes["ITargetingSettingsRuleNode"],
   value: {
     name: string;
     count: number;
@@ -144,22 +194,22 @@ export type ITargetingRuleNode = Omit<ITreeNode, "children" | "childrenType" | "
   }
 }
 
-export type ITargetingSettingsRuleNode = Omit<ITreeNode, "children" | "childrenType" | "expanded" | "type"> & {
+export type ITargetingSettingsRuleNode = ITreeNode & {
   parentId: string;
-  type: typeof ENodeTypes["ITargetingSettingsRuleNode"],
+  type: typeof ENodeTypes["TargetingSettingsRuleNode"],
   value: {
     enabled: boolean;
     hpMin: number;
     hpMax: number;
-    attackMode: keyof typeof EAttackSettings;
-    attackAvoidance: keyof typeof EAttackAvoidance;
-    desiredStance: keyof typeof EDesiredStance;
-    desiredDistance: keyof typeof EDesiredDistance;
+    attackMode: typeof EAttackSettings[keyof typeof EAttackSettings];
+    attackAvoidance: typeof EAttackAvoidance[keyof typeof EAttackAvoidance];
+    desiredStance: typeof EDesiredStance[keyof typeof EDesiredStance];
+    desiredDistance: typeof EDesiredDistance[keyof typeof EDesiredDistance];
     syncSpells: boolean;
-    firstSpell: string;
-    secondSpell: string;
-    thirdSpell: string;
-    lureSpell: string;
+    firstSpell: string | null;
+    secondSpell: string | null;
+    thirdSpell: string | null;
+    lureSpell: string | null;
   }
 }
 

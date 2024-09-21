@@ -21,11 +21,11 @@
     validateKeypress: (e: KEvent) => void} = $props()
 
 
-  let dropdowns: Array<{label: string, fieldName: keyof Pick<ITargetingSettingsRuleNode["value"], "firstSpell" | "secondSpell" | "thirdSpell" | "lureSpell">}> = [{label: "First Spell", fieldName: "firstSpell"},
+  let dropdowns: Array<{label: string, fieldName: keyof Pick<ITargetingSettingsRuleNode["value"], "firstSpell" | "secondSpell" | "thirdSpell" | "lureSpell">}> = [
+  {label: "First Spell", fieldName: "firstSpell"},
   {label: "Second Spell", fieldName: "secondSpell"},
   {label: "Third Spell", fieldName: "thirdSpell"},
   {label: "Lure Spell", fieldName: "lureSpell"}]
-
 
   let spellList = (() => {
     const schema = varr(vobj({
@@ -64,16 +64,17 @@
 
   <DoubleInput label={"Attack Mode"} labelTwo={"Attack Avoidance"}>
     <SwitchSelect 
-        onSelectItem={(itemId: keyof typeof EAttackSettings) => {
+        onSelectItem={(itemId: typeof EAttackSettings[keyof typeof EAttackSettings]) => {
           if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
           $treeActions.onUpdate(selectedNode, {...selectedNode.value, attackMode: itemId})
+         
         }}
         value={selectedNode.value.attackMode}
         items={keyValToItems(EAttackSettings)}
     />
     <hr class="!mx-3 border-secondary-500/50" />
     <SwitchSelect 
-        onSelectItem={(itemId: keyof typeof EAttackAvoidance) => {
+        onSelectItem={(itemId: typeof EAttackAvoidance[keyof typeof EAttackAvoidance]) => {
           if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
           $treeActions.onUpdate(selectedNode, {...selectedNode.value, attackAvoidance: itemId})
         }}
@@ -84,7 +85,7 @@
 
   <DoubleInput label={"Desired Stance"} labelTwo={"Desired Distance"}>
     <SwitchSelect 
-      onSelectItem={(itemId: keyof typeof EDesiredStance) => {
+      onSelectItem={(itemId: typeof EDesiredStance[keyof typeof EDesiredStance]) => {
         if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
         $treeActions.onUpdate(selectedNode, {...selectedNode.value, desiredStance: itemId})
       }}
@@ -93,7 +94,7 @@
     />
     <hr class="!mx-3 border-secondary-500/50" />
     <SwitchSelect 
-      onSelectItem={(itemId: keyof typeof EDesiredDistance) => {
+      onSelectItem={(itemId: typeof EDesiredDistance[keyof typeof EDesiredDistance]) => {
         if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
           $treeActions.onUpdate(selectedNode, {...selectedNode.value, desiredDistance: itemId})
         }}
@@ -107,7 +108,7 @@
     <div class="flex flex-col gap-1">
       <p class=" font-semibold">{label}</p>         
       <Dropdown
-        value={selectedNode.value[fieldName]}
+        value={selectedNode.value[fieldName] ?? "None"}
         dropdownOptions={{
           options: spellList,
           onSelectItem: (itemId: string) => {

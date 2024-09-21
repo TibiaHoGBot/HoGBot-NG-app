@@ -1,28 +1,36 @@
-import type { DropInfo, IHealthRuleNode, INodeContext, IPersistenceRuleNode, ITargetingRuleNode, ITargetingSettingsRuleNode, ITreeNode, UNodeTypes } from "$lib/helpers/types";
+import type { DropInfo, INodeContext, ITargetingRuleNode, UNodeChildren, UNodeRoots, UNodes } from "$lib/helpers/types";
 import { writable, type Writable } from "svelte/store";
 
+export type FOnUpdate = (<T extends Extract<UNodes, { value: Record<string, any> }>>(node: T, newValue: T["value"]) => void) | null
+export type FOnToggle = ((node: Extract<
+  UNodes,
+  {
+    children: any;
+  }
+>) => void) | null
+export type FOnEnable = ((node: Extract<
+  UNodes,
+  {
+    value: {
+      enabled: boolean;
+    };
+  }
+>) => void) | null
+export type FOnSelect = ((node: UNodes) => void) | null
+export type FOnAdd = ((node: Extract<UNodes, UNodeRoots | ITargetingRuleNode>) => void) | null
+export type FOnRemove = ((node: Exclude<UNodes, UNodeRoots>) => void) | null
+export type FOnRename = ((node: UNodes, newLabel: string) => void) | null
+export type FOnDrag = ((parentNode: Extract<UNodes, { children: any }>, newChildren: UNodeChildren) => void) | null
 
 export const treeActions: Writable<{
-  onUpdate: (<T extends Extract<UNodeTypes, { value: Record<string, any> }>>(node: T, newValue: T["value"]) => void) | null
-  onToggle: ((node: Extract<
-    UNodeTypes,
-    {
-      children: any;
-    }
-  >) => void) | null
-  onEnable: ((node: Extract<
-    UNodeTypes,
-    {
-      value: {
-        enabled: boolean;
-      };
-    }
-  >) => void) | null
-  onSelect: ((node: UNodeTypes) => void) | null
-  onAdd: ((node: Extract<UNodeTypes, ITreeNode | ITargetingRuleNode>) => void) | null,
-  onRemove: ((node: Exclude<UNodeTypes, ITreeNode>) => void) | null
-  onRename: ((node: UNodeTypes, newLabel: string) => void) | null
-  onDrag: ((parentNode: Extract<UNodeTypes, { children: any }>, newChildren: Exclude<UNodeTypes, ITreeNode>[]) => void) | null
+  onUpdate: FOnUpdate;
+  onToggle: FOnToggle;
+  onEnable: FOnEnable;
+  onSelect: FOnSelect;
+  onAdd: FOnAdd;
+  onRemove: FOnRemove;
+  onRename: FOnRename
+  onDrag: FOnDrag;
 }> = writable({
   onUpdate: null,
   onToggle: null,
@@ -37,7 +45,7 @@ export const m = writable({ x: 0, y: 0 });
 export const nodeContext: Writable<INodeContext | undefined> = writable(undefined)
 export const draggedNodeInfo: Writable<{
   id: string, parentNode: Extract<
-    UNodeTypes,
+    UNodes,
     {
       children: any;
     }
@@ -45,4 +53,4 @@ export const draggedNodeInfo: Writable<{
 } | undefined> = writable(undefined)
 export const dragTimer: Writable<NodeJS.Timeout | number | undefined> = writable(undefined);
 export const dropInfo: Writable<DropInfo | undefined> = writable(undefined);
-export const selectedNode: Writable<(ITreeNode | IHealthRuleNode | IPersistenceRuleNode | ITargetingRuleNode | ITargetingSettingsRuleNode) | undefined> = writable(undefined);
+export const selectedNode: Writable<UNodes | undefined> = writable(undefined);

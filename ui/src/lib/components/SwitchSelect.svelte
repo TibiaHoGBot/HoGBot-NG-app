@@ -33,7 +33,7 @@
     <button
       onclick={() => {
         const currIdx = items.findIndex((i) => i.id === selectedItem?.value);
-        console.log(currIdx);
+
         if (currIdx === undefined) return;
 
         if (currIdx === items.length - 1) {
