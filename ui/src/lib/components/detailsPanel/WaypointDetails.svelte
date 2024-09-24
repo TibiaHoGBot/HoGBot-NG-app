@@ -79,15 +79,25 @@
       </div>
     </div>
   </div>
-  {#if "range" in selectedNode.value}
+  {#if selectedNode.value.position?.range}
     <div class="flex flex-col gap-2 w-full">
       <p class=" font-semibold">Range</p>
+      <div class="flex items-center gap-6">
       <input
         maxlength={8}
         type="text"
-        value={selectedNode.value.position.x}
+        value={selectedNode.value.position.range.x}
         class="text-sm w-full p-2 border-[1px] border-secondary-500/50 bg-primary-500 outline-none [&::-webkit-inner-spin-button]:appearance-none focus:border-secondary-500 selection:bg-secondary-500"
       />
+      <p>-</p>
+      <input
+      maxlength={8}
+      type="text"
+      value={selectedNode.value.position.range.y}
+      class="text-sm w-full p-2 border-[1px] border-secondary-500/50 bg-primary-500 outline-none [&::-webkit-inner-spin-button]:appearance-none focus:border-secondary-500 selection:bg-secondary-500"
+    />
+      </div>
+    
     </div>
   {/if}
 </div>

@@ -16,14 +16,12 @@
         {
           id: "healer-root-1",
           label: "Health Rules",
-          selected: false,
           expanded: true,
           childrenType: ENodeTypes["HealthRuleNode"],
           children: [
             {
               id: "healer-rule-1",
               label: "Health Rule",
-              selected: false,
               parentId: "healer-root-1",
               value: {
                 enabled: false,
@@ -44,7 +42,6 @@
         { 
           id: "cavebot-root-1",
           label: "Cavebot Rules",
-          selected: false,
           expanded: true,
           childrenType: ENodeTypes["CavebotRuleNode"],
           children: [
@@ -58,14 +55,12 @@
         {
           id: "persistence-root-1",
           label: "Persistence Rules",
-          selected: false,
           expanded: true,
           childrenType: ENodeTypes["PersistenceRuleNode"],
           children: [
             {
               id: "persistence-rule-1",
               label: "Persistence Rule",
-              selected: false,
               parentId: "persistence-root-1",
               value: {
                 enabled: false,
@@ -82,7 +77,6 @@
         {
           id: "targeting-root-1",
           label: "Targeting Rules",
-          selected: false,
           expanded: true,
           type: ENodeTypes["TargetingRootNode"],
           childrenType: ENodeTypes["TargetingRuleNode"],
@@ -90,7 +84,6 @@
             {
               id: "targeting-rule-1",
               label: "Targeting Rule",
-              selected: false,
               expanded: true,
               parentId: "targeting-root-1",
               type: ENodeTypes["TargetingRuleNode"],
@@ -99,7 +92,6 @@
                 {
                     id: "targeting-settings-rule-1",
                     label: "Targeting Settings Rule",
-                    selected: false,
                     parentId: "targeting-rule-1",
                     type: ENodeTypes["TargetingSettingsRuleNode"],
                     value: {
@@ -139,7 +131,6 @@
   const schemaTreeNode = vobj({
     id: vstr(),
     label: vstr(),
-    selected: voptional(vbool()), 
   })
 
   const schemaHealthRootNode = vobj({
@@ -340,6 +331,6 @@
   }}
   class="flex  items-center justify-center bg-gradient-to-br from-surface-500 to-surface-600 w-full h-screen text-white"
 >
-  <MainFrame {data} />
+  <MainFrame bind:data />
 </div>
 

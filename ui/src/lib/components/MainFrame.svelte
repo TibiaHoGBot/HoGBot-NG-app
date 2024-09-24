@@ -11,7 +11,7 @@
   import SidebarItem from "$lib/components/SidebarItem.svelte";
   import Tree from "$lib/components/Tree.svelte";
 
-  let { data }: { data: IScript } = $props();
+  let { data = $bindable() }: { data: IScript } = $props();
 
   let currentTab = $state(0);
   let isDetailsVisible = $state(true);
@@ -21,10 +21,6 @@
   let treeData: UNodeRoots[] = $state([]);
 
   const unselectNode = () => {
-    if ($selectedNode && $selectedNode.selected) {
-      $selectedNode.selected = false;
-    }
-
     selectedNode.set(undefined);
   };
 

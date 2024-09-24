@@ -27,11 +27,14 @@
     waypointTypes[0]
   );
 
+  let selectedRange = $state({ x: 0, y: 0 });
+
   const createWaypoint = (
     position: IWaypointNode["value"]["position"],
     waypointType: keyof typeof EWaypointType
   ): IWaypointNode => {
     const id = generateShortUUID();
+    position.range = selectedRange;
     return {
       id: id,
       label: `${waypointType} - ${id}`,
@@ -42,6 +45,13 @@
         waypointType: waypointType,
       },
     };
+  };
+
+  const handleCreateWaypoint = (
+    position: IWaypointNode["value"]["position"]
+  ) => {
+    if (!$treeActions?.onAdd) return;
+    $treeActions.onAdd(selectedNode, createWaypoint(position, selectedType));
   };
 </script>
 
@@ -65,37 +75,100 @@
     >
       <button
         class="bg-primary-500"
-        onclick={() => {
-          if (!$treeActions?.onAdd) return;
-
-          const pos = {
+        onclick={(_e) =>
+          handleCreateWaypoint({
             x: currentPos.x - 1,
             y: currentPos.y - 1,
             z: currentPos.z,
-          };
-          console.log(selectedType);
-          $treeActions.onAdd(selectedNode, createWaypoint(pos, selectedType));
-        }}>NW</button
+          })}>NW</button
       >
-      <button class="bg-primary-500">N</button>
-      <button class="bg-primary-500">NE</button>
+      <button
+        class="bg-primary-500"
+        onclick={(_e) =>
+          handleCreateWaypoint({
+            x: currentPos.x,
+            y: currentPos.y - 1,
+            z: currentPos.z,
+          })}>N</button
+      >
+      <button
+        class="bg-primary-500"
+        onclick={(_e) =>
+          handleCreateWaypoint({
+            x: currentPos.x + 1,
+            y: currentPos.y - 1,
+            z: currentPos.z,
+          })}>NE</button
+      >
 
-      <button class="bg-primary-500">W</button>
-      <button class="bg-primary-500">C</button>
-      <button class="bg-primary-500">E</button>
+      <button
+        class="bg-primary-500"
+        onclick={(_e) =>
+          handleCreateWaypoint({
+            x: currentPos.x - 1,
+            y: currentPos.y,
+            z: currentPos.z,
+          })}>W</button
+      >
+      <button
+        class="bg-primary-500"
+        onclick={(_e) => handleCreateWaypoint(currentPos)}>C</button
+      >
+      <button
+        class="bg-primary-500"
+        onclick={(_e) =>
+          handleCreateWaypoint({
+            x: currentPos.x + 1,
+            y: currentPos.y,
+            z: currentPos.z,
+          })}>E</button
+      >
 
-      <button class="bg-primary-500">SW</button>
-      <button class="bg-primary-500">S</button>
-      <button class="bg-primary-500">SE</button>
+      <button
+        class="bg-primary-500"
+        onclick={(_e) =>
+          handleCreateWaypoint({
+            x: currentPos.x - 1,
+            y: currentPos.y + 1,
+            z: currentPos.z,
+          })}>SW</button
+      >
+      <button
+        class="bg-primary-500"
+        onclick={(_e) =>
+          handleCreateWaypoint({
+            x: currentPos.x,
+            y: currentPos.y + 1,
+            z: currentPos.z,
+          })}>S</button
+      >
+      <button
+        class="bg-primary-500"
+        onclick={(_e) =>
+          handleCreateWaypoint({
+            x: currentPos.x + 1,
+            y: currentPos.y + 1,
+            z: currentPos.z,
+          })}>SE</button
+      >
     </div>
   </div>
 
-  <div class="flex flex-row justify-center items-center gap-2 mt-4">
+  <div class="flex flex-row justify-center items-center gap-4 mt-4">
     <input
       type="number"
-      value={0}
+      value={selectedRange.x}
       class="text-sm w-20 h-7 p-2 border-[1px] border-secondary-500/50 bg-primary-500 outline-none focus:border-secondary-500 selection:bg-secondary-500"
     />
-    <p class="text-xs">Range</p>
+
+    <div class="flex flex-col items-center">
+      <p class="text-xs">Range</p>
+      <p class="text-xs">x - y</p>
+    </div>
+    <input
+      type="number"
+      value={selectedRange.y}
+      class="text-sm w-20 h-7 p-2 border-[1px] border-secondary-500/50 bg-primary-500 outline-none focus:border-secondary-500 selection:bg-secondary-500"
+    />
   </div>
 </div>
