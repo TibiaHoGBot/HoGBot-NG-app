@@ -40,6 +40,15 @@ export const EDesiredDistance = {
   "Long": 3
 } as const
 
+export const EWaypointType = {
+  action: "action",
+  stand: "stand",
+  node: "node",
+  lure: "lure",
+  rope: "rope",
+  shovel: "shovel",
+  pick: "pick",
+} as const
 
 export type INodeContext = {
   context: "nodeMenu" | "codeEditor" | "dropdownMenu",
@@ -68,7 +77,7 @@ export type IDropdownMeta = {
 
 // *** Switch Types *** //
 
-export type UTargetingSettingKeys = typeof EAttackSettings[keyof typeof EAttackSettings] | typeof EAttackAvoidance[keyof typeof EAttackAvoidance] | typeof EDesiredDistance[keyof typeof EDesiredDistance] | typeof EDesiredStance[keyof typeof EDesiredStance]
+export type UTargetingSettingKeys = string | number
 
 export type ISwitchSelectProps<T extends UTargetingSettingKeys> = {
   value: T;
@@ -83,9 +92,9 @@ export type ISwitchSelectProps<T extends UTargetingSettingKeys> = {
 // *** Node Types *** //
 
 export type UNodeRoots = IHealthRootNode | ICavebotRootNode | IPersistenceRootNode | ITargetingRootNode
-export type UNodeRules = IHealthRuleNode | ICavebotRuleNode | IPersistenceRuleNode | ITargetingRuleNode | ITargetingSettingsRuleNode
+export type UNodeRules = IHealthRuleNode | ICavebotRuleNode | IPersistenceRuleNode | ITargetingRuleNode | ITargetingSettingsRuleNode | IWaypointNode
 export type UNodes = UNodeRoots | UNodeRules
-export type UNodeChildren = IHealthRuleNode[] | ICavebotRuleNode[] | IPersistenceRuleNode[] | ITargetingRuleNode[] | ITargetingSettingsRuleNode[]
+export type UNodeChildren = IHealthRuleNode[] | ICavebotRuleNode[] | IPersistenceRuleNode[] | ITargetingRuleNode[] | ITargetingSettingsRuleNode[] | IWaypointNode[]
 
 export const ENodeTypes = {
   "HealthRootNode": 0,
@@ -96,15 +105,14 @@ export const ENodeTypes = {
   "CavebotRuleNode": 11,
   "PersistenceRuleNode": 12,
   "TargetingRuleNode": 13,
-  "TargetingSettingsRuleNode": 14
+  "TargetingSettingsRuleNode": 14,
+  "WaypointNode": 15
 } as const
 
 export type ITreeNode = {
   id: string;
   label: string;
-  selected?: boolean;
 }
-
 
 export type IScript = {
   hogSettings: {
@@ -126,7 +134,7 @@ export type ICavebotRootNode = ITreeNode & {
   expanded: boolean;
   childrenType: typeof ENodeTypes["CavebotRuleNode"];
   children: ICavebotRuleNode[]
-  type: typeof ENodeTypes["CavebotRootNode"]
+  type: typeof ENodeTypes["CavebotRootNode"],
 }
 
 export type IPersistenceRootNode = ITreeNode & {
@@ -142,7 +150,6 @@ export type ITargetingRootNode = ITreeNode & {
   children: ITargetingRuleNode[]
   type: typeof ENodeTypes["TargetingRootNode"]
 }
-
 
 export type IHealthRuleNode = ITreeNode & {
   parentId: string;
@@ -161,8 +168,25 @@ export type IHealthRuleNode = ITreeNode & {
 export type ICavebotRuleNode = ITreeNode & {
   parentId: string;
   type: typeof ENodeTypes["CavebotRuleNode"];
-  value: {
+  expanded: boolean;
+  childrenType: typeof ENodeTypes["WaypointNode"];
+  children: IWaypointNode[]
+}
 
+export type IWaypointNode = ITreeNode & {
+  parentId: string;
+  type: typeof ENodeTypes["WaypointNode"];
+  value: {
+    position: {
+      x: number,
+      y: number,
+      z: number,
+      range?: {
+        x: number,
+        y: number
+      }
+    },
+    waypointType: typeof EWaypointType[keyof typeof EWaypointType]
   }
 }
 

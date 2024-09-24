@@ -2,26 +2,17 @@
   import { onMount } from "svelte";
 
   import {
+    createCavebotRuleNode,
     createHealthRuleNode,
     createPersistenceRuleNode,
     createTargetingRuleNode,
     createTargetingSettingsRuleNode,
+    createWaypointNode,
     exhaustiveGuard,
     findParentNode,
     generateShortUUID,
   } from "$lib/helpers/functions";
-  import type {
-    DropInfo,
-    ICavebotRuleNode,
-    IHealthRuleNode,
-    IPersistenceRuleNode,
-    ITargetingRuleNode,
-    ITargetingSettingsRuleNode,
-    UNodeChildren,
-    UNodeRoots,
-    UNodeRules,
-    UNodes,
-  } from "$lib/helpers/types";
+  import type { DropInfo, UNodeRoots } from "$lib/helpers/types";
   import { ENodeTypes } from "$lib/helpers/types";
   import {
     draggedNodeInfo,
@@ -68,7 +59,7 @@
     selectedNode.set(node);
   };
 
-  const onAdd: FOnAdd = (node) => {
+  const onAdd: FOnAdd = (node, childrenNode) => {
     const newId = generateShortUUID();
     const cType = node.childrenType;
 
@@ -81,6 +72,9 @@
       }
       case ENodeTypes["CavebotRuleNode"]: {
         if (node.type !== ENodeTypes["CavebotRootNode"]) return;
+        const childId = generateShortUUID();
+        const newNode = createCavebotRuleNode(node.id, newId, childId);
+        node.children.push(newNode);
         break;
       }
       case ENodeTypes["PersistenceRuleNode"]: {
@@ -99,6 +93,12 @@
       case ENodeTypes["TargetingSettingsRuleNode"]: {
         if (node.type !== ENodeTypes["TargetingRuleNode"]) return;
         const newNode = createTargetingSettingsRuleNode(node.id, newId);
+        node.children.push(newNode);
+        break;
+      }
+      case ENodeTypes["WaypointNode"]: {
+        if (node.type !== ENodeTypes["CavebotRuleNode"]) return;
+        const newNode = childrenNode ?? createWaypointNode(node.id, newId);
         node.children.push(newNode);
         break;
       }
@@ -229,7 +229,7 @@
 
 <div class="flex relative h-full overflow-y-scroll hide-scrollbar">
   <div class="w-full mt-4 mx-4">
-    {#each treeData as node (node.id)}
+    {#each treeData as node, idx (node.id)}
       <TreeNode
         {node}
         {handleDragOver}
@@ -237,6 +237,7 @@
         {handleSelectNode}
         parentNode={undefined}
         depth={0}
+        {idx}
       />
     {/each}
   </div>

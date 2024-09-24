@@ -5,7 +5,7 @@
   import "./app.postcss";
 
   import { moveItemInArray } from '$lib/helpers/functions';
-  import { EAttackAvoidance, EAttackSettings, EDesiredDistance, EDesiredStance, EHealthRuleExtraCondition, ENodeTypes, type IScript } from '$lib/helpers/types';
+  import { EAttackAvoidance, EAttackSettings, EDesiredDistance, EDesiredStance, EHealthRuleExtraCondition, ENodeTypes, EWaypointType, type IScript } from '$lib/helpers/types';
   import { draggedNodeInfo, dragTimer, dropInfo, nodeContext, treeActions } from '$lib/stores';
  
   import MainFrame from '$lib/components/MainFrame.svelte';
@@ -48,16 +48,7 @@
           expanded: true,
           childrenType: ENodeTypes["CavebotRuleNode"],
           children: [
-            {
-              id: "cavebot-rule-1",
-              label: "Cavebot Rule",
-              selected: false,
-              parentId: "cavebot-root-1",
-              type: ENodeTypes["CavebotRuleNode"],
-              value: {
-                
-              }
-            }
+           
           ],
           type: ENodeTypes["CavebotRootNode"]
 
@@ -174,6 +165,7 @@
     type: vpipe(vnum(), vval(ENodeTypes["HealthRootNode"]))
   })
 
+
   const schemaCavebotRootNode = vobj({
     ...schemaTreeNode.entries,
     expanded: vbool(),
@@ -181,7 +173,27 @@
     children: varr(vobj({
       ...schemaTreeNode.entries,
       parentId: vstr(),
-      type: vpipe(vnum(), vval(ENodeTypes["CavebotRuleNode"], "type must be equal to CavebotRuleNode"))
+      type: vpipe(vnum(), vval(ENodeTypes["CavebotRuleNode"], "type must be equal to CavebotRuleNode")),
+      expanded: vbool(),
+      childrenType: vpipe(vnum(), vval(ENodeTypes["WaypointNode"], "childrenType must be equal to WaypointNode")),
+      children:  varr(vobj({
+        ...schemaTreeNode.entries,
+        parentId: vstr(),
+        type: vpipe(vnum(), vval(ENodeTypes["WaypointNode"], "type must be equal to CavebotRuleNode")),
+        value: vobj({
+          enabled: vbool(),
+          position: vobj({
+            x: vnum(),
+            y: vnum(),
+            z: vnum(),
+            range: voptional(vobj({
+              x: vnum(),
+              y: vnum(),
+            }))
+          }),
+          waypointType: vpicklist(Object.values(EWaypointType) as Array<(typeof EWaypointType[keyof typeof EWaypointType])>)
+        })
+    })),
     })),
     type: vpipe(vnum(), vval(ENodeTypes["CavebotRootNode"]))
   })
@@ -288,6 +300,7 @@
 
 <svelte:window
   onmouseup={(e) => {
+
     if (!$draggedNodeInfo) {
       clearTimeout($dragTimer);
       return;

@@ -23,6 +23,7 @@
     node: UNodes;
     depth: number;
     parentNode: Extract<UNodes, UNodeRoots | ITargetingRuleNode> | undefined;
+    idx: number;
     handleDragOver: FHandleDragOver
     handleSelectNode: FHandleSelectNode;
     handleEnableNode: FHandleEnableNode;
@@ -41,6 +42,7 @@
     handleDragOver,
     handleSelectNode,
     handleEnableNode,
+    idx
   }: ITreeNodeProps = $props();
 
   let pl = `${20 * depth + 10}px`;
@@ -81,6 +83,10 @@
       >
       <div class="w-0 h-0 translate-x-[10%] border-t-4 border-b-4 border-transparent border-l-8 border-l-white"></div>
       </button>
+    {:else if "children" in node}
+    <div class="flex items-center justify-center min-w-[20px] h-[20px] border rounded-sm">
+      -
+    </div>
     {:else if hasEnabledField(node)}
       <button
         class:pointer-events-none={$draggedNodeInfo}
@@ -90,8 +96,8 @@
       <div class="min-w-[10px] min-h-[10px] rounded-full {node.value.enabled ? "bg-success-500" : "bg-error-500"}"></div>
       </button>
     {:else}
-      <div class="flex items-center justify-center min-w-[20px] h-[20px]">
-        -
+      <div class="flex items-center justify-center min-w-[20px] text-xs max-w-[20px] h-[20px]">
+        #{idx}
       </div>
     {/if}
     <div class="select-none pointer-events-none">
@@ -100,7 +106,7 @@
   </div>
 
   {#if node?.expanded && node?.children}
-    {#each node.children as child (child.id)}
+    {#each node.children as child, idx (child.id)}
       <svelte:self
         {handleDragOver}
         {handleSelectNode}
@@ -108,6 +114,7 @@
         parentNode={node}
         node={child}
         depth={depth + 1}
+        {idx}
       />
     {/each}
   {/if}

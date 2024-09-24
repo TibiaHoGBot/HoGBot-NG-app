@@ -59,7 +59,7 @@
   </div>
 
   <div
-    class="grid w-full overflow-hidden {!isDetailsVisible
+    class="grid w-full overflow-hidden select-none {!isDetailsVisible
       ? 'grid-cols-1'
       : 'grid-cols-2'}"
   >

@@ -4,9 +4,12 @@
   import { selectedNode, treeActions } from "$lib/stores";
 
   import HealthRuleDetails from "$lib/components/detailsPanel/HealthRuleDetails.svelte";
+  import PersistenceRuleDetails from "$lib/components/detailsPanel/PersistenceRuleDetails.svelte";
   import TargetingRuleDetails from "$lib/components/detailsPanel/TargetingRuleDetails.svelte";
   import TargetingSettingsRuleDetails from "$lib/components/detailsPanel/TargetingSettingsRuleDetails.svelte";
-  import PersistenceRuleDetails from "$lib/components/detailsPanel/PersistenceRuleDetails.svelte";
+
+  import CavebotRuleDetails from "$lib/components/detailsPanel/CavebotRuleDetails.svelte";
+  import WaypointDetails from "$lib/components/detailsPanel/WaypointDetails.svelte";
 
   let { editorValue = $bindable() }: { editorValue: string } = $props();
 
@@ -61,7 +64,6 @@
   ) => {
     if (e.key === "Enter") e.currentTarget.blur();
     if (!/^\d*$/.test(e.key)) {
-      console.log(e.key);
       e.preventDefault();
     }
   };
@@ -118,6 +120,18 @@
       <PersistenceRuleDetails selectedNode={$selectedNode} {editorValue} />
     {:else if $selectedNode.type === ENodeTypes["HealthRuleNode"]}
       <HealthRuleDetails
+        selectedNode={$selectedNode}
+        {validateKeypress}
+        {handleFocusIn}
+        {handleFocusOut}
+      />
+    {:else if $selectedNode.type === ENodeTypes["CavebotRuleNode"]}
+      <CavebotRuleDetails
+        selectedNode={$selectedNode}
+        currentPos={{ x: 0, y: 0, z: 0 }}
+      />
+    {:else if $selectedNode.type === ENodeTypes["WaypointNode"]}
+      <WaypointDetails
         selectedNode={$selectedNode}
         {validateKeypress}
         {handleFocusIn}

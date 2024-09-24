@@ -1,4 +1,4 @@
-import { EAttackAvoidance, EAttackSettings, EDesiredDistance, EDesiredStance, EHealthRuleExtraCondition, ENodeTypes, type IHealthRuleNode, type IPersistenceRuleNode, type ITargetingRuleNode, type ITargetingSettingsRuleNode, type UNodeChildren, type UNodeRoots, type UNodes } from "./types";
+import { EAttackAvoidance, EAttackSettings, EDesiredDistance, EDesiredStance, EHealthRuleExtraCondition, ENodeTypes, type ICavebotRuleNode, type IHealthRuleNode, type IPersistenceRuleNode, type ITargetingRuleNode, type ITargetingSettingsRuleNode, type IWaypointNode, type UNodeChildren, type UNodeRoots, type UNodes } from "./types";
 
 export function keyValToItems<T extends Record<any, any>>(keyval: T, category: string): Array<{ id: T[keyof T]; label: keyof T, category: string }>;
 export function keyValToItems<T extends Record<any, any>>(keyval: T): Array<{ id: T[keyof T]; label: keyof T }>;
@@ -17,7 +17,7 @@ export const generateShortUUID = () => {
 export const findParentNode = (
   treeData: UNodes[],
   targetParentId: string,
-): UNodeRoots | ITargetingRuleNode | null => {
+): UNodeRoots | ITargetingRuleNode | ICavebotRuleNode | null => {
 
   for (const node of treeData) {
     if ("children" in node && node.id === targetParentId) {
@@ -65,6 +65,14 @@ export const isTargetingSettingRuleNode = (node: UNodes): node is ITargetingSett
   return node.type === ENodeTypes["TargetingSettingsRuleNode"]
 }
 
+export const isCavebotRuleNode = (node: UNodes): node is ICavebotRuleNode => {
+  return node.type === ENodeTypes["CavebotRuleNode"]
+}
+
+export const isWaypointNode = (node: UNodes): node is IWaypointNode => {
+  return node.type === ENodeTypes["WaypointNode"]
+}
+
 export const hasEnabledField = (node: UNodes): node is Extract<UNodes, { value: { enabled: boolean } }> => {
   return "value" in node && "enabled" in node.value
 }
@@ -98,7 +106,6 @@ export const createTargetingRuleNode = (parentNodeId: string, nodeId: string, ch
     type: ENodeTypes["TargetingRuleNode"],
     id: nodeId,
     label: `${nodeId} - Node`,
-    selected: false,
     expanded: true,
     childrenType: ENodeTypes["TargetingSettingsRuleNode"],
     children: [
@@ -149,5 +156,36 @@ export const createPersistenceRuleNode = (parentNodeId: string, nodeId: string):
       code: "auto(1000)",
     },
     parentId: parentNodeId,
+  }
+}
+
+export const createCavebotRuleNode = (parentNodeId: string, nodeId: string, childNodeId: string): ICavebotRuleNode => {
+  return {
+    type: ENodeTypes["CavebotRuleNode"],
+    id: nodeId,
+    label: `Waypoint Group - ${nodeId}`,
+    parentId: parentNodeId,
+    childrenType: ENodeTypes["WaypointNode"],
+    children: [
+      createWaypointNode(nodeId, childNodeId)
+    ],
+    expanded: true
+  }
+}
+
+export const createWaypointNode = (parentNodeId: string, nodeId: string): IWaypointNode => {
+  return {
+    type: ENodeTypes["WaypointNode"],
+    id: nodeId,
+    label: `action - ${nodeId}`,
+    parentId: parentNodeId,
+    value: {
+      position: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      waypointType: "action"
+    },
   }
 }
