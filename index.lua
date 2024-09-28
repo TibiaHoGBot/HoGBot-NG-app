@@ -1,17 +1,15 @@
-package.cpath = package.cpath .. ";/home/shu/.luarocks/lib/lua/5.3/?.so"
+local home = os.getenv("HOME")
+local launcher = require('webview-launcher')
+local dialog = require("nvdialog")
 
--- Default web content
-local url = [[data:text/html,<!DOCTYPE html>
-<html>
-  <body>
-    <h1>Welcome !</h1>
-    <p>You could specify an URL to open as a command line argument.</p>
-  </body>
-</html>
-]]
+if home then
+  package.cpath = package.cpath .. ";" .. home .. "/.luarocks/lib/lua/5.3/?.so"
+end
 
--- Parse command line arguments
+
+local url = nil
 local urlArg = arg[1]
+
 if urlArg and urlArg ~= '' then
   if urlArg == '-h' or urlArg == '/?' or urlArg == '--help' then
     print('Opens a WebView using the specified URL')
@@ -28,14 +26,37 @@ if urlArg and urlArg ~= '' then
     os.exit(22)
   end
 end
+
 local title = arg[2] or 'Web View'
 local width = arg[3] or 800
 local height = arg[4] or 600
 local resizable = arg[5] ~= 'false'
 
--- Opens the web view
-local webviewLib = require('webview') --.open(url, title, width, height, resizable, true)
-local webview = webviewLib.new(url, title, width, height, resizable, true)
--- local callback = createContext(webview, options)
--- webviewLib.callback(webview, callback)
-webviewLib.loop(webview)
+local wxOptions = {
+  title = title,
+  width = width,
+  height = height,
+  resizable = resizable,
+  debug = true
+}
+
+
+local function saveScript(value)
+  local path = ""
+  local file = io.open(path, "w")
+  if file then
+    file:write(value)
+    file:close()
+    print("Data written to data_io.json")
+  else
+    print("Error opening file")
+  end
+end
+
+local options = {
+  expose = {
+    saveScript = saveScript,
+  }
+}
+
+launcher.launchWithOptions(url, wxOptions, options)

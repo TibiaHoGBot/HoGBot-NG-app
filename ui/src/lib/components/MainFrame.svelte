@@ -10,6 +10,7 @@
   import DetailsPanel from "$lib/components/DetailsPanel.svelte";
   import SidebarItem from "$lib/components/SidebarItem.svelte";
   import Tree from "$lib/components/Tree.svelte";
+  import FileButton from "./FileButton.svelte";
 
   let { data = $bindable() }: { data: IScript } = $props();
 
@@ -48,20 +49,32 @@
     $nodeContext?.context === "codeEditor"}
   class="flex main-gradient w-[800px] h-[600px] border-secondary-500"
 >
-  <div class="flex flex-col h-full w-[60px] bg-primary-500">
-    {#each navItems as { label, icon }, i}
-      <SidebarItem bind:currentTab value={i} {icon} {unselectNode} />
-    {/each}
-  </div>
+  <div class="flex flex-col max-h-[600px] w-full">
+    <div
+      class="flex items-center w-full max-h-[35px] h-full bg-primary-900 py-2"
+    >
+      <FileButton mode="save"><span>Save</span></FileButton>
 
-  <div
-    class="grid w-full overflow-hidden select-none {!isDetailsVisible
-      ? 'grid-cols-1'
-      : 'grid-cols-2'}"
-  >
-    <Tree bind:treeData />
+      <button class="p-1 w-[60px] hover:bg-secondary-400/50">Load</button>
+      <button class="p-1 w-[60px] hover:bg-secondary-400/50">Init</button>
+    </div>
+    <div class="flex h-[565px] w-full">
+      <div class="flex flex-col w-[60px] bg-primary-500">
+        {#each navItems as { label, icon }, i}
+          <SidebarItem bind:currentTab value={i} {icon} {unselectNode} />
+        {/each}
+      </div>
 
-    <DetailsPanel bind:editorValue />
+      <div
+        class="grid w-full overflow-hidden select-none {!isDetailsVisible
+          ? 'grid-cols-1'
+          : 'grid-cols-2'}"
+      >
+        <Tree bind:treeData />
+
+        <DetailsPanel bind:editorValue />
+      </div>
+    </div>
   </div>
 </div>
 

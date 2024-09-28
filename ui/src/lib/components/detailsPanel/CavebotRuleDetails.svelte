@@ -157,7 +157,7 @@
   <div class="flex flex-row justify-center items-center gap-4 mt-4">
     <input
       type="number"
-      value={selectedRange.x}
+      bind:value={selectedRange.x}
       class="text-sm w-20 h-7 p-2 border-[1px] border-secondary-500/50 bg-primary-500 outline-none focus:border-secondary-500 selection:bg-secondary-500"
     />
 
@@ -167,7 +167,7 @@
     </div>
     <input
       type="number"
-      value={selectedRange.y}
+      bind:value={selectedRange.y}
       class="text-sm w-20 h-7 p-2 border-[1px] border-secondary-500/50 bg-primary-500 outline-none focus:border-secondary-500 selection:bg-secondary-500"
     />
   </div>

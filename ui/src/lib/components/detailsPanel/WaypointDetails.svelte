@@ -23,7 +23,7 @@
 
 </script>
 
-<div class="flex flex-col gap-4 mx-4 mt-4">
+<div class="flex flex-col gap-4 mx-4 mt-4 p-4 border border-primary-500/50 rounded-lg">
 
 
   <div class="flex flex-col gap-2 w-full">
