@@ -14,9 +14,9 @@
 
   const saveFile = (): void => {
     const data = JSON.stringify(testObj, null, 2);
-    
+
     //@ts-ignore
-    window.external.invoke(`saveFile;${data}`)
+    window.external.invoke(`saveFile:${data}`)
   };
 
 </script>

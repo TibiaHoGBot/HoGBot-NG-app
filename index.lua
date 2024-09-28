@@ -7,6 +7,7 @@ if home then
 end
 
 
+
 local url = nil
 local urlArg = arg[1]
 
@@ -41,8 +42,8 @@ local wxOptions = {
 }
 
 
-local function saveScript(value)
-  local path = ""
+local function saveFile(value)
+  local path = dialog.save_file_dialog_new("Save File")
   local file = io.open(path, "w")
   if file then
     file:write(value)
@@ -55,7 +56,7 @@ end
 
 local options = {
   expose = {
-    saveScript = saveScript,
+    saveFile = saveFile,
   }
 }
 
