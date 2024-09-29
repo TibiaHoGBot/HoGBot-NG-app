@@ -6,13 +6,17 @@
 
   import CodeEditor from "$lib/components/CodeEditor.svelte";
   import ContextMenu from "$lib/components/ContextMenu.svelte";
-  import DropdownModal from "$lib/components/DropdownModal.svelte";
   import DetailsPanel from "$lib/components/DetailsPanel.svelte";
+  import DropdownModal from "$lib/components/DropdownModal.svelte";
   import SidebarItem from "$lib/components/SidebarItem.svelte";
   import Tree from "$lib/components/Tree.svelte";
-  import FileButton from "./FileButton.svelte";
+  import FileButton from "$lib/components/FileButton.svelte";
 
-  let { data = $bindable() }: { data: IScript } = $props();
+  let {
+    data = $bindable(),
+    loadData,
+  }: { data: IScript; loadData: (data: Record<string, any>) => void } =
+    $props();
 
   let currentTab = $state(0);
   let isDetailsVisible = $state(true);
@@ -51,12 +55,11 @@
 >
   <div class="flex flex-col max-h-[600px] w-full">
     <div
-      class="flex items-center w-full max-h-[35px] h-full bg-primary-900 py-2"
+      class="flex items-center w-full max-h-[35px] h-full bg-primary-900 font-bold"
     >
-      <FileButton mode="save"><span>Save</span></FileButton>
-
-      <button class="p-1 w-[60px] hover:bg-secondary-400/50">Load</button>
-      <button class="p-1 w-[60px] hover:bg-secondary-400/50">Init</button>
+      <FileButton {data} mode="save"><span>Save</span></FileButton>
+      <FileButton mode="load"><span>Load</span></FileButton>
+      <FileButton {loadData} mode="init"><span>Init</span></FileButton>
     </div>
     <div class="flex h-[565px] w-full">
       <div class="flex flex-col w-[60px] bg-primary-500">

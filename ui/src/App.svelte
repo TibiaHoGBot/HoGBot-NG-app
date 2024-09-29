@@ -1,132 +1,15 @@
 <script lang="ts">
   import { safeParse, array as varr, boolean as vbool, nullish as vnullish, number as vnum, object as vobj, optional as voptional, picklist as vpicklist, pipe as vpipe, string as vstr, value as vval } from 'valibot';
-  
-  import TestScript from "$lib/data/script.json";
+
   import "./app.postcss";
 
-  import { moveItemInArray } from '$lib/helpers/functions';
+  import { createDefaultAppState, moveItemInArray } from '$lib/helpers/functions';
   import { EAttackAvoidance, EAttackSettings, EDesiredDistance, EDesiredStance, EHealthRuleExtraCondition, ENodeTypes, EWaypointType, type IScript } from '$lib/helpers/types';
-  import { draggedNodeInfo, dragTimer, dropInfo, nodeContext, treeActions } from '$lib/stores';
+  import { draggedNodeInfo, dragTimer, dropInfo, nodeContext, selectedNode, treeActions } from '$lib/stores';
  
   import MainFrame from '$lib/components/MainFrame.svelte';
 
-  let data: IScript = $state({
-    hogSettings: {
-      healer: [
-        {
-          id: "healer-root-1",
-          label: "Health Rules",
-          expanded: true,
-          childrenType: ENodeTypes["HealthRuleNode"],
-          children: [
-            {
-              id: "healer-rule-1",
-              label: "Health Rule",
-              parentId: "healer-root-1",
-              value: {
-                enabled: false,
-                method: "266",
-                hpMin: 0,
-                hpMax: 100,
-                mpMin: 0,
-                mpMax: 100,
-                extraCondition: 0
-              },
-              type: ENodeTypes["HealthRuleNode"]
-            }
-          ],
-          type: ENodeTypes["HealthRootNode"]
-        }
-      ],
-      cavebot: [
-        { 
-          id: "cavebot-root-1",
-          label: "Cavebot Rules",
-          expanded: true,
-          childrenType: ENodeTypes["CavebotRuleNode"],
-          children: [
-           
-          ],
-          type: ENodeTypes["CavebotRootNode"]
-
-        }
-      ],
-      persistences: [
-        {
-          id: "persistence-root-1",
-          label: "Persistence Rules",
-          expanded: true,
-          childrenType: ENodeTypes["PersistenceRuleNode"],
-          children: [
-            {
-              id: "persistence-rule-1",
-              label: "Persistence Rule",
-              parentId: "persistence-root-1",
-              value: {
-                enabled: false,
-                code: "auto (10000)"
-              },
-              type: ENodeTypes["PersistenceRuleNode"]
-            }
-          ],
-
-          type: ENodeTypes["PersistenceRootNode"]
-        }
-      ],
-      targeting: [
-        {
-          id: "targeting-root-1",
-          label: "Targeting Rules",
-          expanded: true,
-          type: ENodeTypes["TargetingRootNode"],
-          childrenType: ENodeTypes["TargetingRuleNode"],
-          children: [
-            {
-              id: "targeting-rule-1",
-              label: "Targeting Rule",
-              expanded: true,
-              parentId: "targeting-root-1",
-              type: ENodeTypes["TargetingRuleNode"],
-              childrenType: ENodeTypes["TargetingSettingsRuleNode"],
-              children: [
-                {
-                    id: "targeting-settings-rule-1",
-                    label: "Targeting Settings Rule",
-                    parentId: "targeting-rule-1",
-                    type: ENodeTypes["TargetingSettingsRuleNode"],
-                    value: {
-                      enabled: false,
-                      hpMin: 0,
-                      hpMax: 100,
-                      attackMode: EAttackSettings["Offensive/Stand"],
-                      attackAvoidance: EAttackAvoidance["None"],
-                      desiredStance: EDesiredStance["Approach"],
-                      desiredDistance: EDesiredDistance["None"],
-                      syncSpells: false,
-                      firstSpell: null,
-                      secondSpell: null,
-                      thirdSpell: null,
-                      lureSpell: null
-                    }
-                }
-              ],
-              value: {
-                name: "",
-                count: 0,
-                targetSelection: {
-                  health: 1,
-                  proximity: 1,
-                  stickiness: 1
-                },
-                mustAttackMe: false,
-                onlyIfTrapped: false
-              }
-              
-            }
-          ],
-        }
-      ]
-  }})
+  let data: IScript = $state(createDefaultAppState())
 
   const schemaTreeNode = vobj({
     id: vstr(),
@@ -172,7 +55,6 @@
         parentId: vstr(),
         type: vpipe(vnum(), vval(ENodeTypes["WaypointNode"], "type must be equal to CavebotRuleNode")),
         value: vobj({
-          enabled: vbool(),
           position: vobj({
             x: vnum(),
             y: vnum(),
@@ -278,14 +160,20 @@
     })
   })
   
-  const res = safeParse(schema, TestScript)
 
-  if (res.success) {
-    data = res.output as IScript
-  } else {
-    console.error(res.issues)
+
+  const loadData = (newData: Record<string, any>) => {
+    const res = safeParse(schema, newData)
+
+    if (res.success) {
+      selectedNode.set(undefined)
+      data = res.output as IScript;
+    } else {
+      console.error(res.issues)
+    }
   }
-
+  //@ts-ignore
+  window.loadData = loadData
 
 </script>
 
@@ -320,8 +208,6 @@
   }}
 />
 
-
-
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
@@ -331,6 +217,6 @@
   }}
   class="flex  items-center justify-center bg-gradient-to-br from-surface-500 to-surface-600 w-full h-screen text-white"
 >
-  <MainFrame bind:data />
+  <MainFrame bind:data {loadData} />
 </div>
 

@@ -1,30 +1,39 @@
 <script lang="ts">
-  let { children, mode }: { children: any; mode: "save" | "load" } = $props();
+  import { createDefaultAppState } from "$lib/helpers/functions";
+  import type { IScript } from "$lib/helpers/types";
 
-  const testObj = { name: "Kurasiook" };
+  let { children, mode, loadData, data  }: { children: any; mode: "save" | "load" | "init", loadData?: (data: Record<string, any>) => void, data?:IScript } = $props();
 
   const onButtonClick = (): void => {
-
     if (mode === "save") {
       saveFile();
+    } else if (mode === "load") {
+      loadFile();
     } else {
-      //todo
+      if (!loadData) return;
+      loadData(createDefaultAppState())
     }
   };
 
   const saveFile = (): void => {
-    const data = JSON.stringify(testObj, null, 2);
+    if (!data) return;
+    const json = JSON.stringify(data, null, 2);
 
     //@ts-ignore
-    window.external.invoke(`saveFile:${data}`)
+    window.external.invoke(`saveFile:${json}`)
   };
+
+  const loadFile = (): void => {
+    //@ts-ignore
+    window.external.invoke(`loadFile:`)
+  }
 
 </script>
 
-<div>
+<div class="h-full">
   <button
     type="button"
-    class="p-1 w-[60px] hover:bg-secondary-400/50"
+    class="p-1 h-full w-[60px] hover:bg-secondary-400/50"
     onclick={onButtonClick}
   >
     {@render children()}

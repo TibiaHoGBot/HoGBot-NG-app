@@ -6,7 +6,7 @@ if home then
   package.cpath = package.cpath .. ";" .. home .. "/.luarocks/lib/lua/5.3/?.so"
 end
 
-
+dialog.init()
 
 local url = nil
 local urlArg = arg[1]
@@ -43,20 +43,48 @@ local wxOptions = {
 
 
 local function saveFile(value)
-  local path = dialog.save_file_dialog_new("Save File")
-  local file = io.open(path, "w")
-  if file then
-    file:write(value)
-    file:close()
-    print("Data written to data_io.json")
-  else
-    print("Error opening file")
+  local path = dialog.save_file_dialog_new("Save File", ".json", "script.json")
+
+  if not path then
+    print("No file path provided.")
+    return
   end
+
+  local file, err = io.open(path, "w")
+
+  if not file then
+    print("Error opening file: " .. err)
+    return
+  end
+
+  file:write(value)
+  file:close()
+end
+
+local function loadFile(_, _, context, _)
+  local path = dialog.open_file_dialog_new("Open File", "json")
+
+  if not path then
+    print("No file path provided.")
+    return
+  end
+
+  local file, err = io.open(path, "r")
+
+  if not file then
+    print("Error opening file: " .. err)
+    return
+  end
+
+  local val = file:read("*all")
+  context.evalJs("window.loadData(" .. tostring(val) .. ")")
+  file:close()
 end
 
 local options = {
   expose = {
     saveFile = saveFile,
+    loadFile = loadFile,
   }
 }
 

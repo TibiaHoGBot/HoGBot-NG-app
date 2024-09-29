@@ -28,9 +28,7 @@
           editorValue = val;
         },
       },
-      () => {
-        console.log("rdy");
-      }
+      () => {}
     );
 
     return () => {
