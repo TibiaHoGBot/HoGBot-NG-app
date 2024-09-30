@@ -17,90 +17,124 @@
     handleFocusOut: (e: FEvent) => void;
     validateKeypress: (e: KEvent) => void} = $props()
 
+
+  const disableDrag = (e: DragEvent & {
+    currentTarget: EventTarget & HTMLInputElement;
+}) => {
+    e.preventDefault()
+  }
+
+
 </script>
 
-
-<div class="flex flex-col gap-1 mx-4 p-2 mt-2">
-  <p class=" font-semibold">Method</p>
-  <Dropdown
-    value={selectedNode.value.method}
-    dropdownOptions={{
-      options: (() => {
-        const schema = varr(vobj({
-          id: vstr(),
-          label: vstr(),
-          category: vunion([vliteral("Potions"), vliteral("Spells"), vliteral("Runes")]),
-          }))
-        const result = safeParse(schema, healthRuleData);
-        if (!result.success) return [];
-        const parsed: IDropdownItem[] = result.output;
-        return parsed;
-      })(),
-      onSelectItem: (itemId) => {
-        if (!isHealthRuleNode(selectedNode) || !$treeActions.onUpdate || typeof itemId !== "string") return;
-        $treeActions.onUpdate(selectedNode, { ...selectedNode.value, method: itemId });
-      },
-    }}
-  />
-</div>
-
-<div class="flex flex-col gap-1 mx-4 p-2">
-  <p class="font-semibold">Health Range</p>
-  <div class="grid grid-cols-[3fr_1fr_3fr] items-center w-full">
-    <input
-      onfocusin={handleFocusIn}
-      onfocusout={handleFocusOut}
-      onkeypress={validateKeypress}
-      value={selectedNode.value.hpMin}
-      type="text"
-      class="w-full p-2 border-[1px] border-secondary-500/50 bg-primary-500 text-sm outline-none [&::-webkit-inner-spin-button]:appearance-none focus-visible:border-secondary-500 selection:bg-secondary-500"
-    />
-    <hr class="!mx-3 border-secondary-500/50" />
-    <input
-      onfocusin={handleFocusIn}
-      onfocusout={handleFocusOut}
-      onkeypress={validateKeypress}
-      value={selectedNode.value.hpMax}
-      type="text"
-      class=" w-full p-2 border-[1px] border-secondary-500/50 bg-primary-500 text-sm outline-none [&::-webkit-inner-spin-button]:appearance-none focus:border-secondary-500 selection:bg-secondary-500"
-    />
-  </div>
-</div>
-
-<div class="flex flex-col gap-1 mx-4 p-2">
-  <p class="font-semibold">Mana Range</p>
-  <div class="grid grid-cols-[3fr_1fr_3fr] items-center w-full">
-    <input
-      onfocusin={handleFocusIn}
-      onfocusout={handleFocusOut}
-      onkeypress={validateKeypress}
-      value={selectedNode.value.mpMin}
-      type="text"
-      class="w-full p-2 border-[1px] border-secondary-500/50 bg-primary-500 text-sm outline-none [&::-webkit-inner-spin-button]:appearance-none focus:border-secondary-500 selection:bg-secondary-500"
-    />
-    <hr class="!mx-3 border-secondary-500/50" />
-    <input
-      onfocusin={handleFocusIn}
-      onfocusout={handleFocusOut}
-      onkeypress={validateKeypress}
-      value={selectedNode.value.mpMax}
-      type="text"
-      class=" w-full p-2 border-[1px] border-secondary-500/50 bg-primary-500 text-sm outline-none [&::-webkit-inner-spin-button]:appearance-none focus:border-secondary-500 selection:bg-secondary-500"
-    />
-  </div>
-</div>
-
-<div class="flex flex-col gap-1 mx-4 p-2">
-  <p class=" font-semibold">Extra Condition</p>
-  <Dropdown
-    value={selectedNode.value.extraCondition}
-    dropdownOptions={{
-        options: keyValToItems(EHealthRuleExtraCondition, "Status"),
+<div class="flex flex-col gap-4 mx-4 mt-4 p-4 border border-primary-500/50 rounded-lg">
+  <div class="flex flex-col gap-1 mt-2">
+    <p class="font-semibold text-sm">Method</p>
+    <Dropdown
+      value={selectedNode.value.method}
+      dropdownOptions={{
+        options: (() => {
+          const schema = varr(vobj({
+            id: vstr(),
+            label: vstr(),
+            category: vunion([vliteral("Potions"), vliteral("Spells"), vliteral("Runes")]),
+            }))
+          const result = safeParse(schema, healthRuleData);
+          if (!result.success) return [];
+          const parsed: IDropdownItem[] = result.output;
+          return parsed;
+        })(),
         onSelectItem: (itemId) => {
-          const id = itemId  as typeof EHealthRuleExtraCondition[keyof typeof EHealthRuleExtraCondition] 
-          if (!isHealthRuleNode(selectedNode) || !$treeActions.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, { ...selectedNode.value, extraCondition: id });
+          if (!isHealthRuleNode(selectedNode) || !$treeActions.onUpdate || typeof itemId !== "string") return;
+          $treeActions.onUpdate(selectedNode, { ...selectedNode.value, method: itemId });
         },
       }}
-  />
+    />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <p class="font-semibold text-sm">Health Range</p>
+    <div class="grid grid-cols-[3fr_1fr_3fr] items-center w-full">
+      <input
+        onfocusin={handleFocusIn}
+        onfocusout={(e) => {
+          handleFocusOut(e)
+          if (!$treeActions?.onUpdate) return;
+          $treeActions.onUpdate(selectedNode, {...selectedNode.value, hpMin: parseInt(e.currentTarget.value) as number})
+        }}
+        onkeypress={validateKeypress}
+        ondragstart={disableDrag}
+        onmouseup={(e) => e.preventDefault()}
+        draggable="false"
+        value={selectedNode.value.hpMin}
+        type="text"
+        class="w-full p-2 border-[1px] border-secondary-500/50 drag bg-primary-500 text-sm outline-none [&::-webkit-inner-spin-button]:appearance-none focus-visible:border-secondary-500 selection:bg-secondary-500"
+      />
+      <hr class="!mx-3 border-secondary-500/50" />
+      <input
+        onfocusin={handleFocusIn}
+        onfocusout={(e) => {
+          handleFocusOut(e)
+          if (!$treeActions?.onUpdate) return;
+          $treeActions.onUpdate(selectedNode, {...selectedNode.value, hpMax: parseInt(e.currentTarget.value) as number})
+        }}
+        onkeypress={validateKeypress}
+        ondragstart={disableDrag}
+        onmouseup={(e) => e.preventDefault()}
+        value={selectedNode.value.hpMax}
+        type="text"
+        class=" w-full p-2 border-[1px] border-secondary-500/50 bg-primary-500 text-sm outline-none [&::-webkit-inner-spin-button]:appearance-none focus:border-secondary-500 selection:bg-secondary-500"
+      />
+    </div>
+  </div>
+  
+  <div class="flex flex-col gap-1">
+    <p class="font-semibold text-sm">Mana Range</p>
+    <div class="grid grid-cols-[3fr_1fr_3fr] items-center w-full">
+      <input
+        onfocusin={handleFocusIn}
+        onfocusout={(e) => {
+          handleFocusOut(e)
+          if (!$treeActions?.onUpdate) return;
+          $treeActions.onUpdate(selectedNode, {...selectedNode.value, mpMin: parseInt(e.currentTarget.value) as number})
+        }}
+        onkeypress={validateKeypress}
+        ondragstart={disableDrag}
+        onmouseup={(e) => e.preventDefault()}
+        value={selectedNode.value.mpMin}
+        type="text"
+        class="w-full p-2 border-[1px] border-secondary-500/50 bg-primary-500 text-sm outline-none [&::-webkit-inner-spin-button]:appearance-none focus:border-secondary-500 selection:bg-secondary-500"
+      />
+      <hr class="!mx-3 border-secondary-500/50" />
+      <input
+        onfocusin={handleFocusIn}
+        onfocusout={(e) => {
+          handleFocusOut(e)
+          if (!$treeActions?.onUpdate) return;
+          $treeActions.onUpdate(selectedNode, {...selectedNode.value, mpMax: parseInt(e.currentTarget.value) as number})
+        }}
+        onkeypress={validateKeypress}
+        ondragstart={disableDrag}
+        onmouseup={(e) => e.preventDefault()}
+        value={selectedNode.value.mpMax}
+        type="text"
+        class=" w-full p-2 border-[1px] border-secondary-500/50 bg-primary-500 text-sm outline-none [&::-webkit-inner-spin-button]:appearance-none focus:border-secondary-500 selection:bg-secondary-500"
+      />
+    </div>
+  </div>
+  
+  <div class="flex flex-col gap-1">
+    <p class="font-semibold text-sm">Extra Condition</p>
+    <Dropdown
+      value={selectedNode.value.extraCondition}
+      dropdownOptions={{
+          options: keyValToItems(EHealthRuleExtraCondition, "Status"),
+          onSelectItem: (itemId) => {
+            const id = itemId  as typeof EHealthRuleExtraCondition[keyof typeof EHealthRuleExtraCondition] 
+            if (!isHealthRuleNode(selectedNode) || !$treeActions.onUpdate) return;
+            $treeActions.onUpdate(selectedNode, { ...selectedNode.value, extraCondition: id });
+          },
+        }}
+    />
+  </div>
 </div>

@@ -27,7 +27,7 @@
 
 
   <div class="flex flex-col gap-2 w-full">
-    <p class="font-semibold">Waypoint Type</p>
+    <p class="font-semibold text-sm">Waypoint Type</p>
     <SwitchSelect 
       onSelectItem={(itemId: string | number) => {
         const type = EWaypointType[itemId as keyof typeof EWaypointType]
@@ -39,7 +39,7 @@
   </div>
 
   <div class="flex flex-col gap-2 w-full">
-    <p class=" font-semibold">Position</p>
+    <p class="font-semibold text-sm">Position</p>
     <div class="grid grid-cols-3 gap-4">
       <div class="flex flex-col gap-1">
         <p class="text-xs">x</p>
@@ -81,7 +81,7 @@
   </div>
   {#if selectedNode.value.position?.range}
     <div class="flex flex-col gap-2 w-full">
-      <p class=" font-semibold">Range</p>
+      <p class="font-semibold text-sm">Range</p>
       <div class="flex items-center gap-6">
       <input
         maxlength={8}

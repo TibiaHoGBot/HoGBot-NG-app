@@ -35,7 +35,8 @@
   const handleFocusIn = (
     e: FocusEvent & { currentTarget: EventTarget & HTMLInputElement }
   ) => {
-    e.currentTarget.setSelectionRange(0, -1);
+    const inputElement = e.currentTarget;
+    inputElement.setSelectionRange(0, inputElement.value.length);
   };
 
   const handleFocusOut = (
@@ -138,7 +139,12 @@
         {handleFocusOut}
       />
     {:else if $selectedNode?.type === ENodeTypes["TargetingRuleNode"]}
-      <TargetingRuleDetails selectedNode={$selectedNode} />
+      <TargetingRuleDetails
+        {validateKeypress}
+        {handleFocusIn}
+        {handleFocusOut}
+        selectedNode={$selectedNode}
+      />
     {:else if $selectedNode?.type === ENodeTypes["TargetingSettingsRuleNode"]}
       <TargetingSettingsRuleDetails
         selectedNode={$selectedNode}

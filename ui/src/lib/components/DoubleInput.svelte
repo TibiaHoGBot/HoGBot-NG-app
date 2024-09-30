@@ -3,12 +3,12 @@
 </script>
 
 
-<div class="grid grid-cols-[3fr_1fr_3fr] items-center w-full">
-  <p class="font-semibold">{label}</p>
+<div class="grid grid-cols-[4fr_1fr_4fr] items-center w-full">
+  <p class="font-semibold text-sm">{label}</p>
   <span class="invisible"></span>
-  <p class="font-semibold">{labelTwo}</p>
+  <p class="font-semibold text-sm">{labelTwo}</p>
 </div>
 
-<div class="grid grid-cols-[3fr_1fr_3fr] items-center w-full">
+<div class="grid grid-cols-[4fr_1fr_4fr] items-center w-full">
   {@render children()}
 </div>

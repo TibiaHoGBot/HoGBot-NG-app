@@ -41,82 +41,104 @@
         )()
 
 </script>
- <div class="flex flex-col gap-2 mx-4 mt-4">
-  <DoubleInput label="Health Min" labelTwo="Health Max">
-    <input
-        onfocusin={handleFocusIn}
-        onfocusout={handleFocusOut}
-        onkeypress={validateKeypress}
-        value={selectedNode.value.hpMin}
-        type="text"
-        class="w-full p-2 border-[1px] border-secondary-500/50 bg-primary-500 text-sm outline-none [&::-webkit-inner-spin-button]:appearance-none focus-visible:border-secondary-500 selection:bg-secondary-500"
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div
+  draggable="false"
+  onmouseup={(e) => e.preventDefault()}
+  ondragstart={(e) => e.preventDefault()}
+  class="flex flex-col gap-4 mx-4 mt-4 p-4 border border-primary-500/50 rounded-lg"
+>
+  <div class="flex flex-col gap-2">
+    <DoubleInput label="Health Min" labelTwo="Health Max">
+      <input
+          onfocusin={handleFocusIn}
+          onfocusout={(e) => {
+            handleFocusOut(e);
+            if (!$treeActions.onUpdate) return;
+            $treeActions.onUpdate(selectedNode, {
+              ...selectedNode.value,
+              hpMin: parseInt(e.currentTarget.value)
+            });
+          }}
+          onkeypress={validateKeypress}
+          value={selectedNode.value.hpMin}
+          type="text"
+          class="w-full p-2 border-[1px] border-secondary-500/50 bg-primary-500 text-sm outline-none [&::-webkit-inner-spin-button]:appearance-none focus-visible:border-secondary-500 selection:bg-secondary-500"
+        />
+        <hr class="!mx-3 border-secondary-500/50" />
+        <input
+          onfocusin={handleFocusIn}
+          onfocusout={(e) => {
+            handleFocusOut(e);
+            if (!$treeActions.onUpdate) return;
+            $treeActions.onUpdate(selectedNode, {
+              ...selectedNode.value,
+              hpMax: parseInt(e.currentTarget.value)
+            });
+          }}
+          onkeypress={validateKeypress}
+          value={selectedNode.value.hpMax}
+          type="text"
+          class=" w-full p-2 border-[1px] border-secondary-500/50 bg-primary-500 text-sm outline-none [&::-webkit-inner-spin-button]:appearance-none focus:border-secondary-500 selection:bg-secondary-500"
+        />
+    </DoubleInput>
+
+    <DoubleInput label={"Attack Mode"} labelTwo={"Attack Avoidance"}>
+      <SwitchSelect 
+          onSelectItem={(itemId: typeof EAttackSettings[keyof typeof EAttackSettings]) => {
+            if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
+            $treeActions.onUpdate(selectedNode, {...selectedNode.value, attackMode: itemId})
+          
+          }}
+          value={selectedNode.value.attackMode}
+          items={keyValToItems(EAttackSettings)}
       />
       <hr class="!mx-3 border-secondary-500/50" />
-      <input
-        onfocusin={handleFocusIn}
-        onfocusout={handleFocusOut}
-        onkeypress={validateKeypress}
-        value={selectedNode.value.hpMax}
-        type="text"
-        class=" w-full p-2 border-[1px] border-secondary-500/50 bg-primary-500 text-sm outline-none [&::-webkit-inner-spin-button]:appearance-none focus:border-secondary-500 selection:bg-secondary-500"
-      />
-  </DoubleInput>
-
-  <DoubleInput label={"Attack Mode"} labelTwo={"Attack Avoidance"}>
-    <SwitchSelect 
-        onSelectItem={(itemId: typeof EAttackSettings[keyof typeof EAttackSettings]) => {
-          if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, {...selectedNode.value, attackMode: itemId})
-         
-        }}
-        value={selectedNode.value.attackMode}
-        items={keyValToItems(EAttackSettings)}
-    />
-    <hr class="!mx-3 border-secondary-500/50" />
-    <SwitchSelect 
-        onSelectItem={(itemId: typeof EAttackAvoidance[keyof typeof EAttackAvoidance]) => {
-          if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, {...selectedNode.value, attackAvoidance: itemId})
-        }}
-        value={selectedNode.value.attackAvoidance}
-        items={keyValToItems(EAttackAvoidance)}
-     />
-  </DoubleInput>
-
-  <DoubleInput label={"Desired Stance"} labelTwo={"Desired Distance"}>
-    <SwitchSelect 
-      onSelectItem={(itemId: typeof EDesiredStance[keyof typeof EDesiredStance]) => {
-        if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
-        $treeActions.onUpdate(selectedNode, {...selectedNode.value, desiredStance: itemId})
-      }}
-      value={selectedNode.value.desiredStance}
-      items={keyValToItems(EDesiredStance)}
-    />
-    <hr class="!mx-3 border-secondary-500/50" />
-    <SwitchSelect 
-      onSelectItem={(itemId: typeof EDesiredDistance[keyof typeof EDesiredDistance]) => {
-        if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, {...selectedNode.value, desiredDistance: itemId})
-        }}
-      value={selectedNode.value.desiredDistance}
-      items={keyValToItems(EDesiredDistance)}
-    />   
-  </DoubleInput>
-
-
-  {#each dropdowns as {label, fieldName}}
-    <div class="flex flex-col gap-1">
-      <p class=" font-semibold">{label}</p>         
-      <Dropdown
-        value={selectedNode.value[fieldName] ?? "None"}
-        dropdownOptions={{
-          options: spellList,
-          onSelectItem: (itemId) => {
+      <SwitchSelect 
+          onSelectItem={(itemId: typeof EAttackAvoidance[keyof typeof EAttackAvoidance]) => {
             if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
-            $treeActions.onUpdate(selectedNode, { ...selectedNode.value, [fieldName]: itemId });
-          },
-        }}
+            $treeActions.onUpdate(selectedNode, {...selectedNode.value, attackAvoidance: itemId})
+          }}
+          value={selectedNode.value.attackAvoidance}
+          items={keyValToItems(EAttackAvoidance)}
       />
-    </div>
-  {/each}
+    </DoubleInput>
+
+    <DoubleInput label={"Desired Stance"} labelTwo={"Desired Distance"}>
+      <SwitchSelect 
+        onSelectItem={(itemId: typeof EDesiredStance[keyof typeof EDesiredStance]) => {
+          if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
+          $treeActions.onUpdate(selectedNode, {...selectedNode.value, desiredStance: itemId})
+        }}
+        value={selectedNode.value.desiredStance}
+        items={keyValToItems(EDesiredStance)}
+      />
+      <hr class="!mx-3 border-secondary-500/50" />
+      <SwitchSelect 
+        onSelectItem={(itemId: typeof EDesiredDistance[keyof typeof EDesiredDistance]) => {
+          if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
+            $treeActions.onUpdate(selectedNode, {...selectedNode.value, desiredDistance: itemId})
+          }}
+        value={selectedNode.value.desiredDistance}
+        items={keyValToItems(EDesiredDistance)}
+      />   
+    </DoubleInput>
+
+
+    {#each dropdowns as {label, fieldName}}
+      <div class="flex flex-col gap-1">
+        <p class="font-semibold text-sm">{label}</p>         
+        <Dropdown
+          value={selectedNode.value[fieldName] ?? "None"}
+          dropdownOptions={{
+            options: spellList,
+            onSelectItem: (itemId) => {
+              if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
+              $treeActions.onUpdate(selectedNode, { ...selectedNode.value, [fieldName]: itemId });
+            },
+          }}
+        />
+      </div>
+    {/each}
+  </div>
 </div>
