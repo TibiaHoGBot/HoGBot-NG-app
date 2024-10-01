@@ -76,7 +76,7 @@
   });
 </script>
 
-<div class="h-full flex flex-col gap-1 hide-scrollbar overflow-y-scroll pb-10">
+<div class="h-full flex flex-col gap-1 hide-scrollbar overflow-y-scroll pb-5">
   {#if $selectedNode}
     <div
       class="flex justify-center items-center mx-4 mt-4 rounded-sm {cNodeLabelBg} "
@@ -118,7 +118,7 @@
       </div>
     </div>
     {#if $selectedNode?.type === ENodeTypes["PersistenceRuleNode"]}
-      <PersistenceRuleDetails selectedNode={$selectedNode} {editorValue} />
+      <PersistenceRuleDetails selectedNode={$selectedNode} bind:editorValue />
     {:else if $selectedNode.type === ENodeTypes["HealthRuleNode"]}
       <HealthRuleDetails
         selectedNode={$selectedNode}

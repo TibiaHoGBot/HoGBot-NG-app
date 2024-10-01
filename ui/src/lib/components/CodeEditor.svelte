@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { IPersistenceRuleNode } from "$lib/helpers/types";
+  import { treeActions } from "$lib/stores";
   import type { PrismEditor } from "prism-code-editor";
   import "prism-code-editor/prism/languages/lua";
   import { basicEditor } from "prism-code-editor/setups";
@@ -7,14 +9,21 @@
   let {
     editorValue = $bindable(),
     code,
+    selectedNode,
   }: {
     code: string;
     editorValue: string;
+    selectedNode: IPersistenceRuleNode;
   } = $props();
 
-  let editorElement: HTMLElement;
-  let editor: PrismEditor;
+  let editorElement: HTMLElement | undefined = $state(undefined);
+  let editor: PrismEditor | undefined = $state(undefined);
+
   onMount(() => {
+    if (!editorElement) {
+      console.error("editor failed to initialize");
+      return;
+    }
     registerTheme("editor-theme", () => import("$lib/editor-theme.css?inline"));
     editor = basicEditor(
       editorElement,
@@ -32,7 +41,7 @@
     );
 
     return () => {
-      editor.remove();
+      editor?.remove();
     };
   });
 
@@ -43,6 +52,19 @@
   });
 </script>
 
-<div class="relative flex flex-col items-end gap-2">
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div
+  onkeydown={(e) => {
+    if (e.ctrlKey && e.key === "s") {
+      e.preventDefault();
+      if (!$treeActions.onUpdate || !selectedNode) return;
+      $treeActions.onUpdate(selectedNode, {
+        ...selectedNode.value,
+        code: editorValue,
+      });
+    }
+  }}
+  class="relative h-full flex flex-col items-end gap-2"
+>
   <div id="editor" class=" w-full" bind:this={editorElement}></div>
 </div>

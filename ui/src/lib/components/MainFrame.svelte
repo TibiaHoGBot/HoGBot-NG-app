@@ -97,11 +97,15 @@
       onclick={(e) => {
         e.stopPropagation();
       }}
-      class="py-8 h-full ml-[80px] w-[670px] rounded-md"
+      class="py-8 h-full ml-[50px] w-[700px] rounded-sm"
     >
-      <div class="relative bg-primary-500 rounded-md h-full">
-        <div class="h-[90%] bg-primary-600 overflow-y-scroll rounded-t-lg">
-          <CodeEditor bind:editorValue code={$selectedNode.value.code} />
+      <div class="relative bg-primary-500 rounded-sm h-full">
+        <div class="h-[90%] bg-primary-600 overflow-y-scroll rounded-t-sm">
+          <CodeEditor
+            bind:editorValue
+            code={$selectedNode.value.code}
+            selectedNode={$selectedNode}
+          />
         </div>
         <div class="p-2 flex items-center justify-between">
           <div>

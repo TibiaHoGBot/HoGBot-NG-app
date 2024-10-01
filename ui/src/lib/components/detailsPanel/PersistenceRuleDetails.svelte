@@ -6,13 +6,13 @@
 
   let {
     selectedNode,
-    editorValue,
+    editorValue = $bindable(),
   }: { selectedNode: IPersistenceRuleNode; editorValue: string } = $props();
 </script>
 
-<div class="relative h-[600px] p-4 group">
+<div class="relative h-full flex flex-col gap-2 p-4 group overflow-hidden">
   <button
-    class="invisible group-hover:visible absolute -translate-x-[4px] translate-y-[4px] right-0 top-0 z-[10]"
+    class="invisible group-hover:visible absolute -translate-x-1/2 translate-y-1/2 right-0 top-0 z-[10]"
     onclick={(e) => {
       e.stopImmediatePropagation();
       nodeContext.set({
@@ -22,14 +22,19 @@
   >
     {@html IconArrowsMaximize}
   </button>
+  <p class="font-semibold text-sm">Script</p>
   <div
-    class="h-3/4 bg-primary-600 overflow-y-scroll group-focus-within:border group-focus-within:border-secondary-500"
+    class="h-full bg-primary-600 overflow-y-scroll group-focus-within:border group-focus-within:border-secondary-500 text-sm"
   >
     {#if !$nodeContext}
-      <CodeEditor bind:editorValue code={selectedNode.value.code} />
+      <CodeEditor
+        bind:editorValue
+        code={selectedNode.value.code}
+        {selectedNode}
+      />
     {/if}
   </div>
-  <div class="flex items-center justify-center mt-4">
+  <div class="flex items-center justify-center mt-2">
     <button
       onclick={(_e) => {
         if (!$treeActions.onUpdate) return;
