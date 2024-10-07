@@ -1,0 +1,160 @@
+{
+  "version": "0.9.4",
+  "scope": "project",
+  "selectedTree": "959c45ef-fa76-4778-8da3-e4640b8cf837",
+  "trees": [
+    {
+      "version": "0.9.4",
+      "scope": "tree",
+      "id": "959c45ef-fa76-4778-8da3-e4640b8cf837",
+      "title": "tree",
+      "description": "Every tree should start with this node. Change this node's title to rename the tree.",
+      "root": "969a179d-8333-4e21-8180-87214138ce22",
+      "properties": {
+        "mp": "$mp"
+      },
+      "nodes": {
+        "969a179d-8333-4e21-8180-87214138ce22": {
+          "id": "969a179d-8333-4e21-8180-87214138ce22",
+          "name": "Sequence",
+          "title": "...[Agnostic Sequence]",
+          "description": "Executes child tasks one after another until all them were executed. Child outcomes don't matter, always returns success.<br>Starts from the left-most child and moves from left to right (in vertical layout) unless 'RandomStart' parameter is 'true' - then starts from a random child, moves left to right and if necessary - loops back to the first child after the last one.",
+          "properties": {
+            "randomStart": "false",
+            "shuffle": "false"
+          },
+          "display": {
+            "x": -336,
+            "y": -96
+          },
+          "children": [
+            "802eab07-1fa5-4f8f-b4ca-992e4892f570",
+            "83c073a1-69e0-4b5b-aa18-14478443bb5a"
+          ]
+        },
+        "fef9dc27-33c0-46bd-a52b-11c8fc191cb2": {
+          "id": "fef9dc27-33c0-46bd-a52b-11c8fc191cb2",
+          "name": "Succeeder",
+          "title": "run scrips",
+          "description": "This task will always succeed.",
+          "properties": {},
+          "display": {
+            "x": -180,
+            "y": 216
+          }
+        },
+        "802eab07-1fa5-4f8f-b4ca-992e4892f570": {
+          "id": "802eab07-1fa5-4f8f-b4ca-992e4892f570",
+          "name": "StateCondition",
+          "title": "Healer Enabled",
+          "description": "Executes a child node only if condition is met. Condition is only evaluated when this node starts, it is not re-evaluated while the child running.",
+          "properties": {
+            "condition": "$healer.enabled"
+          },
+          "display": {
+            "x": -564,
+            "y": 84
+          },
+          "child": "1a6be826-0e25-436d-ae7f-e63aca7de35a"
+        },
+        "83c073a1-69e0-4b5b-aa18-14478443bb5a": {
+          "id": "83c073a1-69e0-4b5b-aa18-14478443bb5a",
+          "name": "StateCondition",
+          "title": "Persistences Enabled",
+          "description": "Executes a child node only if condition is met. Condition is only evaluated when this node starts, it is not re-evaluated while the child running.",
+          "properties": {
+            "condition": "$persistences.enabled"
+          },
+          "display": {
+            "x": -180,
+            "y": 84
+          },
+          "child": "fef9dc27-33c0-46bd-a52b-11c8fc191cb2"
+        },
+        "e78239b2-44e4-4eb7-bf0a-329e5c87ba26": {
+          "id": "e78239b2-44e4-4eb7-bf0a-329e5c87ba26",
+          "name": "Heal",
+          "title": "Heal",
+          "description": "",
+          "properties": {
+            "rule": "$health_rule"
+          },
+          "display": {
+            "x": -564,
+            "y": 384
+          }
+        },
+        "1a6be826-0e25-436d-ae7f-e63aca7de35a": {
+          "id": "1a6be826-0e25-436d-ae7f-e63aca7de35a",
+          "name": "GetProperHealthRule",
+          "title": "Get Proper Health Rule",
+          "description": "",
+          "properties": {
+            "rules": "$healer.rules",
+            "hp": "$hp",
+            "mp": "$mp"
+          },
+          "display": {
+            "x": -564,
+            "y": 204
+          },
+          "child": "e78239b2-44e4-4eb7-bf0a-329e5c87ba26"
+        }
+      },
+      "display": {
+        "camera_x": 1124.029161556824,
+        "camera_y": 452.5171804272971,
+        "camera_z": 0.95,
+        "x": -336,
+        "y": -216
+      }
+    }
+  ],
+  "custom_nodes": [
+    {
+      "spec": null,
+      "name": "RunScript",
+      "title": "RunScript",
+      "icon": {
+        "className": "fas fa-scroll"
+      },
+      "category": "action",
+      "description": null,
+      "properties": {},
+      "version": "0.9.4",
+      "scope": "node"
+    },
+    {
+      "spec": null,
+      "name": "Heal",
+      "title": "Heal",
+      "icon": {
+        "className": "fas fa-heartbeat"
+      },
+      "category": "action",
+      "description": null,
+      "properties": {
+        "rule": "$health_rule"
+      },
+      "version": "0.9.4",
+      "scope": "node"
+    },
+    {
+      "spec": null,
+      "name": "GetProperHealthRule",
+      "title": "Get Proper Health Rule",
+      "icon": {
+        "className": "fas fa-question-circle"
+      },
+      "category": "decorator",
+      "description": null,
+      "properties": {
+        "rules": "$healer.rules",
+        "hp": "$hp",
+        "mp": "$mp"
+      },
+      "version": "0.9.4",
+      "scope": "node"
+    }
+  ]
+}
