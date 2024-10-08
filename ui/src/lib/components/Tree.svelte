@@ -130,8 +130,17 @@
     parentNode.children = newChildren;
   };
 
-  const onUpdate: FOnUpdate = (node, newValue) => {
+  const onUpdate: FOnUpdate = (node, newValue, moduleName) => {
     node.value = newValue;
+
+    const obj = {
+      moduleName: moduleName,
+      id: node.id,
+      value: node.value,
+    };
+
+    //@ts-ignore
+    window.external.invoke(`update:${JSON.stringify(obj)}`);
   };
 
   const handleSelectNode: FHandleSelectNode = (e, node, parentNode) => {

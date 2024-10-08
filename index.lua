@@ -2,6 +2,7 @@ local home = os.getenv("HOME")
 local launcher = require('webview-launcher')
 local dialog = require("nvdialog")
 local helpers = require("bot_modules/helpers")
+local jsonLib = require("cjson")
 local createBhTree = require("behaviourtree/init")
 
 if home then
@@ -10,33 +11,18 @@ end
 
 dialog.init()
 
-local health_rules = { {
-  hpMin = 30,
-  hpMax = 80,
-  mpMin = 30,
-  mpMax = 80,
-  name = "Light Healing"
-} }
-
-local persistences = {
-  {
-    time = 5000,
-    value = "haste"
-  },
-  {
-    time = 3000,
-    value = "exiva"
-  },
-}
-
 local state = {
   healer = {
     enabled = true,
-    rules = health_rules,
+    rules = {
+      {
+        id = "healer-rule-1"
+      }
+    },
   },
   persistences = {
     enabled = false,
-    rules = persistences
+    rules = {}
   },
   hp = 40,
   mp = 50,
@@ -49,21 +35,23 @@ if not bhtree then
   os.exit(0)
 end
 
-bhtree:run()
-
 
 local url, wxOptions = helpers.parseArgs()
 
 local saveFile = helpers.saveFile
 local loadFile = helpers.loadFile
+local updateState = helpers.updateState
 
 local options = {
   expose = {
     saveFile = saveFile,
     loadFile = loadFile,
+    update = updateState
   },
   context = {
-    dialog = dialog
+    dialog = dialog,
+    jsonLib = jsonLib,
+    state = state
   }
 }
 

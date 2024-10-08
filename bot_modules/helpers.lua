@@ -41,20 +41,20 @@ function helpers.saveFile(value, _, context, _)
   local dialog = context["dialog"]
 
   if not dialog then
-    print("No dialog found.")
+    print("saveFile: No dialog found.")
     return
   end
   local path = dialog.save_file_dialog_new("Save File", ".json", "script.json")
 
   if not path then
-    print("No file path provided.")
+    print("saveFile:  No file path provided.")
     return
   end
 
   local file, err = io.open(path, "w")
 
   if not file then
-    print("Error opening file: " .. err)
+    print("saveFile:  Error opening file - " .. err)
     return
   end
 
@@ -66,27 +66,57 @@ function helpers.loadFile(_, _, context, _)
   local dialog = context["dialog"]
 
   if not dialog then
-    print("No dialog found.")
+    print("loadFile: No dialog found")
     return
   end
 
   local path = dialog.open_file_dialog_new("Open File", "json")
 
   if not path then
-    print("No file path provided.")
+    print("loadFile: No file path provided")
     return
   end
 
   local file, err = io.open(path, "r")
 
   if not file then
-    print("Error opening file: " .. err)
+    print("loadFile: Error opening file - " .. err)
     return
   end
 
   local val = file:read("*all")
   context.evalJs("window.loadData(" .. tostring(val) .. ")")
   file:close()
+end
+
+function helpers.updateState(value, _, context, _)
+  local jsonLib = context["jsonLib"]
+  local state = context["state"]
+
+  local s, r = pcall(jsonLib.decode, value)
+
+  if not s then
+    print("updateState: failed to decode json")
+  end
+
+  local moduleName = r["moduleName"]
+  local foundRule = false
+
+  for i, rule in pairs(state[moduleName]["rules"]) do
+    for k, v in pairs(rule) do
+      if k == "id" and v == r["id"] then
+        state[moduleName]["rules"][i] = r["value"]
+        state[moduleName]["rules"][i]["id"] = r["id"]
+        foundRule = true
+        break
+      end
+    end
+  end
+
+  if not foundRule then
+    print("updateState: Failed to find the rule")
+    return
+  end
 end
 
 return helpers

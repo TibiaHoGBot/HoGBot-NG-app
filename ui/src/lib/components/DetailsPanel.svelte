@@ -41,20 +41,20 @@
 
   const handleFocusOut = (
     e: FocusEvent & { currentTarget: EventTarget & HTMLInputElement }
-  ) => {
+  ): number | null => {
     const num = parseInt(e.currentTarget.value);
 
     if (num == null || isNaN(num)) {
       e.preventDefault();
-      return;
+      return null;
     }
 
     if (num < 0) {
-      e.currentTarget.value = "0";
+      return 0;
     } else if (num > 100) {
-      e.currentTarget.value = "100";
+      return 100;
     } else {
-      e.currentTarget.value = num.toString();
+      return num;
     }
   };
 

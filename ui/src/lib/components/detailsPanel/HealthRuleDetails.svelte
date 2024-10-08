@@ -14,7 +14,7 @@
   let {selectedNode, handleFocusIn, handleFocusOut, validateKeypress}: {
     selectedNode: IHealthRuleNode,
     handleFocusIn: (e: FEvent) => void,
-    handleFocusOut: (e: FEvent) => void;
+    handleFocusOut: (e: FEvent) => number | null;
     validateKeypress: (e: KEvent) => void} = $props()
 
 
@@ -46,7 +46,7 @@
         })(),
         onSelectItem: (itemId) => {
           if (!isHealthRuleNode(selectedNode) || !$treeActions.onUpdate || typeof itemId !== "string") return;
-          $treeActions.onUpdate(selectedNode, { ...selectedNode.value, method: itemId });
+          $treeActions.onUpdate(selectedNode, { ...selectedNode.value, method: itemId }, "healer");
         },
       }}
     />
@@ -58,9 +58,12 @@
       <input
         onfocusin={handleFocusIn}
         onfocusout={(e) => {
-          handleFocusOut(e)
-          if (!$treeActions?.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, {...selectedNode.value, hpMin: parseInt(e.currentTarget.value) as number})
+          const oldVal = selectedNode.value.hpMin;
+          const newVal = handleFocusOut(e);
+          if (!newVal) return
+          e.currentTarget.value = newVal.toString()
+          if (oldVal === newVal || !$treeActions?.onUpdate) return;
+          $treeActions.onUpdate(selectedNode, {...selectedNode.value, hpMin: newVal}, "healer")
         }}
         onkeypress={validateKeypress}
         ondragstart={disableDrag}
@@ -74,9 +77,12 @@
       <input
         onfocusin={handleFocusIn}
         onfocusout={(e) => {
-          handleFocusOut(e)
-          if (!$treeActions?.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, {...selectedNode.value, hpMax: parseInt(e.currentTarget.value) as number})
+          const oldVal = selectedNode.value.hpMax;
+          const newVal = handleFocusOut(e);
+          if (!newVal) return
+          e.currentTarget.value = newVal.toString()
+          if (oldVal === newVal || !$treeActions?.onUpdate) return;
+          $treeActions.onUpdate(selectedNode, {...selectedNode.value, hpMax: newVal}, "healer")
         }}
         onkeypress={validateKeypress}
         ondragstart={disableDrag}
@@ -94,9 +100,12 @@
       <input
         onfocusin={handleFocusIn}
         onfocusout={(e) => {
-          handleFocusOut(e)
-          if (!$treeActions?.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, {...selectedNode.value, mpMin: parseInt(e.currentTarget.value) as number})
+          const oldVal = selectedNode.value.mpMin;
+          const newVal = handleFocusOut(e);
+          if (!newVal) return
+          e.currentTarget.value = newVal.toString()
+          if (oldVal === newVal || !$treeActions?.onUpdate) return;
+          $treeActions.onUpdate(selectedNode, {...selectedNode.value, mpMin: newVal}, "healer")
         }}
         onkeypress={validateKeypress}
         ondragstart={disableDrag}
@@ -109,9 +118,13 @@
       <input
         onfocusin={handleFocusIn}
         onfocusout={(e) => {
-          handleFocusOut(e)
-          if (!$treeActions?.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, {...selectedNode.value, mpMax: parseInt(e.currentTarget.value) as number})
+      
+          const oldVal = selectedNode.value.mpMax;
+          const newVal = handleFocusOut(e);
+          if (!newVal) return
+          e.currentTarget.value = newVal.toString()
+          if (oldVal === newVal || !$treeActions?.onUpdate) return;
+          $treeActions.onUpdate(selectedNode, {...selectedNode.value, mpMax: newVal}, "healer")
         }}
         onkeypress={validateKeypress}
         ondragstart={disableDrag}
@@ -132,7 +145,7 @@
           onSelectItem: (itemId) => {
             const id = itemId  as typeof EHealthRuleExtraCondition[keyof typeof EHealthRuleExtraCondition] 
             if (!isHealthRuleNode(selectedNode) || !$treeActions.onUpdate) return;
-            $treeActions.onUpdate(selectedNode, { ...selectedNode.value, extraCondition: id });
+            $treeActions.onUpdate(selectedNode, { ...selectedNode.value, extraCondition: id }, "healer");
           },
         }}
     />

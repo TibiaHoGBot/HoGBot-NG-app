@@ -1,7 +1,7 @@
-import type { DropInfo, ICavebotRuleNode, INodeContext, ITargetingRuleNode, UNodeChildren, UNodeRoots, UNodes } from "$lib/helpers/types";
+import type { DropInfo, INodeContext, IScript, UNodeChildren, UNodeRoots, UNodes } from "$lib/helpers/types";
 import { writable, type Writable } from "svelte/store";
 
-export type FOnUpdate = (<T extends Extract<UNodes, { value: Record<string, any> }>>(node: T, newValue: T["value"]) => void) | null
+export type FOnUpdate = (<T extends Extract<UNodes, { value: Record<string, any> }>>(node: T, newValue: T["value"], moduleName: keyof IScript["hogSettings"]) => void) | null
 export type FOnToggle = ((node: Extract<
   UNodes,
   {
