@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { hasEnabledField } from "$lib/helpers/functions";
+  import { getModuleName, hasEnabledField } from "$lib/helpers/functions";
   import { m, nodeContext, selectedNode, treeActions } from "$lib/stores";
 
   let items: {
@@ -16,7 +16,8 @@
         shortcut: "Del",
         eventHandler: (_e: MouseEvent) => {
           if (!$treeActions.onRemove) return;
-          $treeActions.onRemove($selectedNode);
+          const moduleName = getModuleName($selectedNode.type);
+          $treeActions.onRemove($selectedNode, moduleName);
           nodeContext.set(undefined);
         },
       };
@@ -43,7 +44,8 @@
         shortcut: "Ctrl+E",
         eventHandler: (_e: MouseEvent) => {
           if (!$treeActions.onEnable) return;
-          $treeActions.onEnable($selectedNode);
+          const moduleName = getModuleName($selectedNode.type);
+          $treeActions.onEnable($selectedNode, moduleName);
         },
         divider: true,
       };

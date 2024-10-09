@@ -15,18 +15,23 @@ local state = {
   healer = {
     enabled = true,
     rules = {
-      {
-        id = "healer-rule-1"
-      }
     },
+    activeRule = nil
   },
   persistences = {
     enabled = false,
     rules = {}
   },
-  hp = 40,
-  mp = 50,
-  health_rule = nil
+  cavebot = {
+    enabled = false,
+    rules = {}
+  },
+  targeting = {
+    enabled = false,
+    rules = {}
+  },
+  hp = -1,
+  mp = -1,
 }
 
 local bhtree = createBhTree(state, true)
@@ -40,12 +45,14 @@ local url, wxOptions = helpers.parseArgs()
 
 local saveFile = helpers.saveFile
 local loadFile = helpers.loadFile
+local loadState = helpers.loadState
 local updateState = helpers.updateState
 
 local options = {
   expose = {
     saveFile = saveFile,
     loadFile = loadFile,
+    loadState = loadState,
     update = updateState
   },
   context = {

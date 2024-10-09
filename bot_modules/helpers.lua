@@ -89,33 +89,96 @@ function helpers.loadFile(_, _, context, _)
   file:close()
 end
 
-function helpers.updateState(value, _, context, _)
+function helpers.loadState(value, _, context, _)
   local jsonLib = context["jsonLib"]
   local state = context["state"]
 
-  local s, r = pcall(jsonLib.decode, value)
+  if not state then
+    print("updateState: failed to provide state")
+  end
+
+  local s, parsed = pcall(jsonLib.decode, value)
 
   if not s then
     print("updateState: failed to decode json")
   end
 
-  local moduleName = r["moduleName"]
-  local foundRule = false
+  state = parsed
 
-  for i, rule in pairs(state[moduleName]["rules"]) do
-    for k, v in pairs(rule) do
-      if k == "id" and v == r["id"] then
-        state[moduleName]["rules"][i] = r["value"]
-        state[moduleName]["rules"][i]["id"] = r["id"]
-        foundRule = true
-        break
+  print(helpers.dump(state))
+end
+
+function helpers.updateState(value, _, context, _)
+  print("updateState")
+  local jsonLib = context["jsonLib"]
+  local state = context["state"]
+
+
+  if not state then
+    print("updateState: failed to provide state")
+  end
+
+  local s, parsed = pcall(jsonLib.decode, value)
+
+  if not s then
+    print("updateState: failed to decode json")
+  end
+
+  local action = parsed["action"]
+
+  if not action or (action ~= "update" and action ~= "remove" and action ~= "create" and action ~= "reorder" and action ~= "enable") then
+    print("updateState: action is absent or invalid")
+  end
+
+  local moduleName = parsed["moduleName"]
+  print("module: " .. moduleName .. " - id: " .. parsed["id"])
+  print(type(parsed["id"]))
+  if action == "create" then
+    local rule = parsed["value"]
+    rule["id"] = parsed["id"]
+    table.insert(state[moduleName]["rules"], #state[moduleName]["rules"] + 1, rule)
+  elseif action == "reorder" then
+    local item = table.remove(state[moduleName]["rules"], parsed["startIdx"] + 1)
+    table.insert(state[moduleName]["rules"], parsed["dropIdx"] + 1, item)
+  else
+    local foundRule = false
+    print(#state[moduleName]["rules"])
+    for i, rule in pairs(state[moduleName]["rules"]) do
+      for k, v in pairs(rule) do
+        print("rule - " .. k .. v)
+        if k == "id" and v == parsed["id"] then
+          if action == "update" then
+            for field, val in pairs(parsed["value"]) do state[moduleName]["rules"][i][field] = val end
+          elseif action == "remove" then
+            table.remove(state[moduleName]["rules"], i)
+          elseif action == "enable" then
+            state[moduleName]["rules"][i]["enabled"] = parsed["value"]
+          end
+
+          foundRule = true
+          break
+        end
       end
+    end
+
+    if not foundRule then
+      print("updateState: Failed to find the rule")
     end
   end
 
-  if not foundRule then
-    print("updateState: Failed to find the rule")
-    return
+  print(helpers.dump(state[moduleName]["rules"]))
+end
+
+function helpers.dump(o)
+  if type(o) == 'table' then
+    local s = '{ '
+    for k, v in pairs(o) do
+      if type(k) ~= 'number' then k = '"' .. k .. '"' end
+      s = s .. '[' .. k .. '] = ' .. helpers.dump(v) .. ','
+    end
+    return s .. '} '
+  else
+    return tostring(o)
   end
 end
 

@@ -11,8 +11,13 @@
     exhaustiveGuard,
     findParentNode,
     generateShortUUID,
+    getModuleName,
   } from "$lib/helpers/functions";
-  import type { DropInfo, UNodeRoots } from "$lib/helpers/types";
+  import type {
+    DropInfo,
+    IUpdateStateParams,
+    UNodeRoots,
+  } from "$lib/helpers/types";
   import { ENodeTypes } from "$lib/helpers/types";
   import {
     draggedNodeInfo,
@@ -49,8 +54,20 @@
     node.expanded = !node.expanded;
   };
 
-  const onEnable: FOnEnable = (node) => {
-    node.value.enabled = !node.value.enabled;
+  const onEnable: FOnEnable = (node, moduleName) => {
+    const val = !node.value.enabled;
+
+    node.value.enabled = val;
+
+    const obj: IUpdateStateParams = {
+      action: "enable",
+      moduleName: moduleName,
+      id: node.id,
+      value: val,
+    };
+
+    //@ts-ignore
+    window.external.invoke(`update:${JSON.stringify(obj)}`);
   };
 
   const onSelect: FOnSelect = (node) => {
@@ -60,54 +77,66 @@
   };
 
   const onAdd: FOnAdd = (node, childrenNode) => {
+    type Single<T extends any[]> = T[number];
     const newId = generateShortUUID();
     const cType = node.childrenType;
 
-    switch (cType) {
-      case ENodeTypes["HealthRuleNode"]: {
-        if (node.type !== ENodeTypes["HealthRootNode"]) return;
-        const newNode = createHealthRuleNode(node.id, newId);
-        node.children.push(newNode);
-        break;
+    const createChildNode = (
+      cType: (typeof node)["childrenType"]
+    ): Single<typeof node.children> | undefined => {
+      switch (cType) {
+        case ENodeTypes["HealthRuleNode"]: {
+          if (node.type !== ENodeTypes["HealthRootNode"]) return;
+          return createHealthRuleNode(node.id, newId);
+        }
+        case ENodeTypes["CavebotRuleNode"]: {
+          if (node.type !== ENodeTypes["CavebotRootNode"]) return;
+          const childId = generateShortUUID();
+          return createCavebotRuleNode(node.id, newId, childId);
+        }
+        case ENodeTypes["PersistenceRuleNode"]: {
+          if (node.type !== ENodeTypes["PersistenceRootNode"]) return;
+          return createPersistenceRuleNode(node.id, newId);
+        }
+        case ENodeTypes["TargetingRuleNode"]: {
+          if (node.type !== ENodeTypes["TargetingRootNode"]) return;
+          const childId = generateShortUUID();
+          return createTargetingRuleNode(node.id, newId, childId);
+        }
+        case ENodeTypes["TargetingSettingsRuleNode"]: {
+          if (node.type !== ENodeTypes["TargetingRuleNode"]) return;
+          return createTargetingSettingsRuleNode(node.id, newId);
+        }
+        case ENodeTypes["WaypointNode"]: {
+          if (node.type !== ENodeTypes["CavebotRuleNode"]) return;
+          return childrenNode ?? createWaypointNode(node.id, newId);
+        }
+        default:
+          exhaustiveGuard(cType);
       }
-      case ENodeTypes["CavebotRuleNode"]: {
-        if (node.type !== ENodeTypes["CavebotRootNode"]) return;
-        const childId = generateShortUUID();
-        const newNode = createCavebotRuleNode(node.id, newId, childId);
-        node.children.push(newNode);
-        break;
+    };
+
+    const newNode = createChildNode(cType);
+
+    if (newNode) {
+      //@ts-ignore
+      node.children.push(newNode);
+      if ("value" in newNode) {
+        const moduleName = getModuleName(newNode.type);
+        const obj: IUpdateStateParams = {
+          moduleName: moduleName,
+          action: "create",
+          value: newNode.value,
+          id: newNode.id,
+        };
+
+        //@ts-ignore
+        window.external.invoke(`update:${JSON.stringify(obj)}`);
       }
-      case ENodeTypes["PersistenceRuleNode"]: {
-        if (node.type !== ENodeTypes["PersistenceRootNode"]) return;
-        const newNode = createPersistenceRuleNode(node.id, newId);
-        node.children.push(newNode);
-        break;
-      }
-      case ENodeTypes["TargetingRuleNode"]: {
-        if (node.type !== ENodeTypes["TargetingRootNode"]) return;
-        const childId = generateShortUUID();
-        const newNode = createTargetingRuleNode(node.id, newId, childId);
-        node.children.push(newNode);
-        break;
-      }
-      case ENodeTypes["TargetingSettingsRuleNode"]: {
-        if (node.type !== ENodeTypes["TargetingRuleNode"]) return;
-        const newNode = createTargetingSettingsRuleNode(node.id, newId);
-        node.children.push(newNode);
-        break;
-      }
-      case ENodeTypes["WaypointNode"]: {
-        if (node.type !== ENodeTypes["CavebotRuleNode"]) return;
-        const newNode = childrenNode ?? createWaypointNode(node.id, newId);
-        node.children.push(newNode);
-        break;
-      }
-      default:
-        exhaustiveGuard(cType);
     }
   };
 
-  const onRemove: FOnRemove = (node) => {
+  const onRemove: FOnRemove = (node, moduleName) => {
     const parentNode = findParentNode(treeData, node.parentId);
 
     if ("children" in node) {
@@ -120,6 +149,15 @@
       }) as typeof parentNode.children;
       selectedNode.set(undefined);
     }
+
+    const obj: IUpdateStateParams = {
+      action: "remove",
+      moduleName: moduleName,
+      id: node.id,
+    };
+
+    //@ts-ignore
+    window.external.invoke(`update:${JSON.stringify(obj)}`);
   };
 
   const onRename: FOnRename = (node, newLabel) => {
@@ -133,7 +171,8 @@
   const onUpdate: FOnUpdate = (node, newValue, moduleName) => {
     node.value = newValue;
 
-    const obj = {
+    const obj: IUpdateStateParams = {
+      action: "update",
       moduleName: moduleName,
       id: node.id,
       value: node.value,
@@ -205,8 +244,8 @@
     e.stopPropagation();
 
     nodeContext.set(undefined);
-
-    onEnable(node);
+    const moduleName = getModuleName(node.type);
+    onEnable(node, moduleName);
   };
 
   onMount(() => {

@@ -1,7 +1,7 @@
-import type { DropInfo, INodeContext, IScript, UNodeChildren, UNodeRoots, UNodes } from "$lib/helpers/types";
+import type { DropInfo, INodeContext, IScript, UModuleNames, UNodeChildren, UNodeRoots, UNodes } from "$lib/helpers/types";
 import { writable, type Writable } from "svelte/store";
 
-export type FOnUpdate = (<T extends Extract<UNodes, { value: Record<string, any> }>>(node: T, newValue: T["value"], moduleName: keyof IScript["hogSettings"]) => void) | null
+export type FOnUpdate = (<T extends Extract<UNodes, { value: Record<string, any> }>>(node: T, newValue: T["value"], moduleName: UModuleNames) => void) | null
 export type FOnToggle = ((node: Extract<
   UNodes,
   {
@@ -15,10 +15,10 @@ export type FOnEnable = ((node: Extract<
       enabled: boolean;
     };
   }
->) => void) | null
+>, moduleName: UModuleNames) => void) | null
 export type FOnSelect = ((node: UNodes) => void) | null
 export type FOnAdd = ((node: Extract<UNodes, { children: any[] }>, childNode?: typeof node.children[0]) => void) | null
-export type FOnRemove = ((node: Exclude<UNodes, UNodeRoots>) => void) | null
+export type FOnRemove = ((node: Exclude<UNodes, UNodeRoots>, moduleName: UModuleNames) => void) | null
 export type FOnRename = ((node: UNodes, newLabel: string) => void) | null
 export type FOnDrag = ((parentNode: Extract<UNodes, { children: any }>, newChildren: UNodeChildren) => void) | null
 

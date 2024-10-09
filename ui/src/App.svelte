@@ -3,8 +3,8 @@
 
   import "./app.postcss";
 
-  import { createDefaultAppState, moveItemInArray } from '$lib/helpers/functions';
-  import { EAttackAvoidance, EAttackSettings, EDesiredDistance, EDesiredStance, EHealthRuleExtraCondition, ENodeTypes, EWaypointType, type IScript } from '$lib/helpers/types';
+  import { createDefaultAppState, getModuleName, moveItemInArray } from '$lib/helpers/functions';
+  import { EAttackAvoidance, EAttackSettings, EDesiredDistance, EDesiredStance, EHealthRuleExtraCondition, ENodeTypes, EWaypointType, type IScript, type IUpdateStateParams } from '$lib/helpers/types';
   import { draggedNodeInfo, dragTimer, dropInfo, nodeContext, selectedNode, treeActions } from '$lib/stores';
  
   import MainFrame from '$lib/components/MainFrame.svelte';
@@ -168,6 +168,29 @@
     if (res.success) {
       selectedNode.set(undefined)
       data = res.output as IScript;
+
+      const obj = {
+        healer: {
+          enabled: false,
+          rules: data["hogSettings"]["healer"][0].children.map(child => {
+            return {id: child.id, ...child.value}
+          })
+        },
+        cavebot: {
+          enabled: false,
+          rules: []
+        },
+        persistences: {
+          enabled: false,
+          rules: []
+        },
+        targeting: {
+          enabled: false,
+          rules: []
+        }
+      }
+      //@ts-ignore
+      window.external.invoke(`loadState:${JSON.stringify(obj)}`)
     } else {
       console.error(res.issues)
     }
@@ -193,6 +216,21 @@
         );
         $treeActions.onDrag($draggedNodeInfo.parentNode, newChildren);
         e.preventDefault();
+        
+        if ($selectedNode && "value" in $selectedNode) {
+          const moduleName = getModuleName($selectedNode.type)
+          const obj: IUpdateStateParams = {
+            action: "reorder",
+            moduleName: moduleName,
+            id: $selectedNode.id,
+            startIdx: $dropInfo.startIdx,
+            dropIdx: $dropInfo.dropIdx,
+          }
+          //@ts-ignore
+          window.external.invoke(`update:${JSON.stringify(obj)}`)
+        }
+        
+
     }
 
     draggedNodeInfo.set(undefined);

@@ -116,10 +116,14 @@
           <button
             onclick={(_e) => {
               if (!$treeActions.onUpdate) return;
-              $treeActions.onUpdate($selectedNode, {
-                ...$selectedNode.value,
-                code: editorValue,
-              });
+              $treeActions.onUpdate(
+                $selectedNode,
+                {
+                  ...$selectedNode.value,
+                  code: editorValue,
+                },
+                "persistences"
+              );
             }}
             disabled={editorValue === $selectedNode.value.code}
             class="p-2 btn font-semibold hover:bg-secondary-500/50 border border-secondary-600 w-40"

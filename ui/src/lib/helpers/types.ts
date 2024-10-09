@@ -55,6 +55,35 @@ export type INodeContext = {
   meta?: IDropdownMeta
 }
 
+export type UModuleNames = keyof IScript["hogSettings"]
+
+export type IUpdateStateParams = {
+  action: "update",
+  moduleName: UModuleNames,
+  value: Record<string, any>,
+  id: string;
+} | {
+  action: "remove",
+  moduleName: UModuleNames,
+  id: string;
+} | {
+  action: "create"
+  moduleName: UModuleNames,
+  value: Record<string, any>,
+  id: string
+} | {
+  action: "reorder"
+  moduleName: UModuleNames,
+  startIdx: number,
+  dropIdx: number
+  id: string
+} | {
+  action: "enable",
+  moduleName: UModuleNames,
+  id: string,
+  value: boolean
+}
+
 // *** Dropdown Types *** //
 
 export type IDropdownProps = {
