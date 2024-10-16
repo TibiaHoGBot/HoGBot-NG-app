@@ -25,7 +25,8 @@
     "tailwindcss": "^3.4.10",
     "tslib": "^2.6.3",
     "typescript": "^5.5.3",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vite-plugin-singlefile": "^2.0.2"
   },
   "dependencies": {
     "prism-code-editor": "^3.4.0",
