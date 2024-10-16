@@ -3,6 +3,7 @@ if home then
   package.cpath = package.cpath .. ";" .. home .. "/.luarocks/lib/lua/5.3/?.so"
 end
 
+
 local webviewLib = require('webview')
 
 -- This module allows to launch a web page that could executes custom Lua code.
