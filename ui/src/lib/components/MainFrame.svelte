@@ -13,9 +13,9 @@
   import ContextMenu from "$lib/components/ContextMenu.svelte";
   import DetailsPanel from "$lib/components/DetailsPanel.svelte";
   import DropdownModal from "$lib/components/DropdownModal.svelte";
+  import FileButton from "$lib/components/FileButton.svelte";
   import SidebarItem from "$lib/components/SidebarItem.svelte";
   import Tree from "$lib/components/Tree.svelte";
-  import FileButton from "$lib/components/FileButton.svelte";
 
   let {
     data = $bindable(),
