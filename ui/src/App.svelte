@@ -3,9 +3,9 @@
 
   import "./app.postcss";
 
-  import { createDefaultAppState, getModuleName, moveItemInArray } from '$lib/helpers/functions';
+  import { createDefaultAppState, getitemType, moveItemInArray } from '$lib/helpers/functions';
   import { EAttackAvoidance, EAttackSettings, EDesiredDistance, EDesiredStance, EHealthRuleExtraCondition, ENodeTypes, EWaypointType, type IScript, type IUpdateStateParams } from '$lib/helpers/types';
-  import { draggedNodeInfo, dragTimer, dropInfo, nodeContext, selectedNode, treeActions } from '$lib/stores';
+  import { draggedNodeInfo, dragTimer, dropInfo, nodeContext, selectedNode, selectedParentNode, treeActions } from '$lib/stores';
  
   import MainFrame from '$lib/components/MainFrame.svelte';
 
@@ -167,70 +167,102 @@
 
     if (res.success) {
       selectedNode.set(undefined)
+      selectedParentNode.set(undefined)
       data = res.output as IScript;
 
-      const obj = {
-        healer: {
+      const params: IUpdateStateParams = {
+        action: "load",
+        itemType: "state",
+        value: {
+          healer: {
           enabled: false,
           rules: data["hogSettings"]["healer"][0].children.map(child => {
             return {id: child.id, ...child.value}
           })
-        },
-        cavebot: {
-          enabled: false,
-          rules: []
-        },
-        persistences: {
-          enabled: false,
-          rules: []
-        },
-        targeting: {
-          enabled: false,
-          rules: []
+          },
+          cavebot: {
+            enabled: false,
+            waypoints: 
+              data["hogSettings"]["cavebot"][0].children.map(parent => {
+                return {[parent.id]: parent.children.map(child => {return {id: child.id, ...child.value}}
+                )}
+              })
+            
+          },
+          persistences: {
+            enabled: false,
+            rules: data["hogSettings"]["persistences"][0].children.map(child => {
+            return {id: child.id, ...child.value}
+          })
+          },
+          targeting: {
+            enabled: false,
+            rules: 
+              data["hogSettings"]["targeting"][0].children.map(parent => {
+                return {...parent.value, id: parent.id, settings: parent.children.map(child => {return {id: child.id, ...child.value}}
+                )}
+              })
+          }
         }
       }
       //@ts-ignore
-      window.external.invoke(`loadState:${JSON.stringify(obj)}`)
+      webview.updateState(JSON.stringify(params), (status, res) => {
+        if (status) {
+        } else {
+          console.error(status, res)
+        }
+      })
     } else {
       console.error(res.issues)
     }
   }
-  //@ts-ignore
-  window.loadData = loadData
 
+  //@ts-ignore
+  loadData(data)
 </script>
+
 
 <svelte:window
   onmouseup={(e) => {
-
     if (!$draggedNodeInfo) {
       clearTimeout($dragTimer);
       return;
     }
 
     if ($treeActions.onDrag && $dropInfo) {
-        const newChildren = moveItemInArray(
-        $draggedNodeInfo.parentNode.children,
-         $dropInfo.startIdx,
-         $dropInfo.dropIdx
-        );
-        $treeActions.onDrag($draggedNodeInfo.parentNode, newChildren);
-        e.preventDefault();
-        
-        if ($selectedNode && "value" in $selectedNode) {
-          const moduleName = getModuleName($selectedNode.type)
-          const obj: IUpdateStateParams = {
-            action: "reorder",
-            moduleName: moduleName,
-            id: $selectedNode.id,
-            startIdx: $dropInfo.startIdx,
-            dropIdx: $dropInfo.dropIdx,
-          }
-          //@ts-ignore
-          window.external.invoke(`update:${JSON.stringify(obj)}`)
+      const newChildren = moveItemInArray(
+      $draggedNodeInfo.parentNode.children,
+        $dropInfo.startIdx,
+        $dropInfo.dropIdx
+      );
+
+      if ($selectedNode && "value" in $selectedNode) {
+        const itemType = getitemType($selectedNode.type)
+
+        if (!itemType) {
+          console.error("invalid item type");
+          return;
         }
         
+        const params: IUpdateStateParams = {
+          action: "reorder",
+          itemType: itemType,
+          id: $selectedNode.id,
+          startIdx: $dropInfo.startIdx,
+          dropIdx: $dropInfo.dropIdx,
+          parentId: $draggedNodeInfo.parentNode.id
+        }
 
+        webview.updateState(JSON.stringify(params), (status, res) => {
+        if (status) {     
+        } else {
+          console.error(status, res);
+          return
+        }});
+      }
+      
+      $treeActions.onDrag($draggedNodeInfo.parentNode, newChildren);
+      e.preventDefault(); 
     }
 
     draggedNodeInfo.set(undefined);

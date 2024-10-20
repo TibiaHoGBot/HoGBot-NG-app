@@ -2,7 +2,7 @@
   import spellData from "$lib/data/spellData.json";
   import { isTargetingSettingRuleNode, keyValToItems } from "$lib/helpers/functions";
   import { EAttackAvoidance, EAttackSettings, EDesiredDistance, EDesiredStance, type IDropdownItem, type ITargetingSettingsRuleNode } from "$lib/helpers/types";
-  import { treeActions } from "$lib/stores";
+  import { selectedParentNode, treeActions } from "$lib/stores";
   import { safeParse, array as varr, object as vobj, string as vstr } from 'valibot';
 
   import DoubleInput from "$lib/components/DoubleInput.svelte";
@@ -58,7 +58,7 @@
             $treeActions.onUpdate(selectedNode, {
               ...selectedNode.value,
               hpMin: parseInt(e.currentTarget.value)
-            });
+            }, "targetingSetting", $selectedParentNode);
           }}
           onkeypress={validateKeypress}
           value={selectedNode.value.hpMin}
@@ -74,7 +74,7 @@
             $treeActions.onUpdate(selectedNode, {
               ...selectedNode.value,
               hpMax: parseInt(e.currentTarget.value)
-            });
+            }, "targetingSetting", $selectedParentNode);
           }}
           onkeypress={validateKeypress}
           value={selectedNode.value.hpMax}
@@ -87,8 +87,7 @@
       <SwitchSelect 
           onSelectItem={(itemId: typeof EAttackSettings[keyof typeof EAttackSettings]) => {
             if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
-            $treeActions.onUpdate(selectedNode, {...selectedNode.value, attackMode: itemId})
-          
+            $treeActions.onUpdate(selectedNode, {...selectedNode.value, attackMode: itemId}, "targetingSetting", $selectedParentNode) 
           }}
           value={selectedNode.value.attackMode}
           items={keyValToItems(EAttackSettings)}
@@ -97,7 +96,7 @@
       <SwitchSelect 
           onSelectItem={(itemId: typeof EAttackAvoidance[keyof typeof EAttackAvoidance]) => {
             if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
-            $treeActions.onUpdate(selectedNode, {...selectedNode.value, attackAvoidance: itemId})
+            $treeActions.onUpdate(selectedNode, {...selectedNode.value, attackAvoidance: itemId}, "targetingSetting", $selectedParentNode)
           }}
           value={selectedNode.value.attackAvoidance}
           items={keyValToItems(EAttackAvoidance)}
@@ -108,7 +107,7 @@
       <SwitchSelect 
         onSelectItem={(itemId: typeof EDesiredStance[keyof typeof EDesiredStance]) => {
           if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, {...selectedNode.value, desiredStance: itemId})
+          $treeActions.onUpdate(selectedNode, {...selectedNode.value, desiredStance: itemId}, "targetingSetting", $selectedParentNode)
         }}
         value={selectedNode.value.desiredStance}
         items={keyValToItems(EDesiredStance)}
@@ -117,7 +116,7 @@
       <SwitchSelect 
         onSelectItem={(itemId: typeof EDesiredDistance[keyof typeof EDesiredDistance]) => {
           if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
-            $treeActions.onUpdate(selectedNode, {...selectedNode.value, desiredDistance: itemId})
+            $treeActions.onUpdate(selectedNode, {...selectedNode.value, desiredDistance: itemId}, "targetingSetting", $selectedParentNode)
           }}
         value={selectedNode.value.desiredDistance}
         items={keyValToItems(EDesiredDistance)}
@@ -134,7 +133,7 @@
             options: spellList,
             onSelectItem: (itemId) => {
               if (!isTargetingSettingRuleNode(selectedNode) || !$treeActions.onUpdate) return;
-              $treeActions.onUpdate(selectedNode, { ...selectedNode.value, [fieldName]: itemId });
+              $treeActions.onUpdate(selectedNode, { ...selectedNode.value, [fieldName]: itemId }, "targetingSetting", $selectedParentNode);
             },
           }}
         />

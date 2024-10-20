@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { IPersistenceRuleNode } from "$lib/helpers/types";
-  import { treeActions } from "$lib/stores";
+  import { selectedParentNode, treeActions } from "$lib/stores";
   import type { PrismEditor } from "prism-code-editor";
   import "prism-code-editor/prism/languages/lua";
   import { basicEditor } from "prism-code-editor/setups";
@@ -58,10 +58,15 @@
     if (e.ctrlKey && e.key === "s") {
       e.preventDefault();
       if (!$treeActions.onUpdate || !selectedNode) return;
-      $treeActions.onUpdate(selectedNode, {
-        ...selectedNode.value,
-        code: editorValue,
-      });
+      $treeActions.onUpdate(
+        selectedNode,
+        {
+          ...selectedNode.value,
+          code: editorValue,
+        },
+        "persistenceRule",
+        $selectedParentNode
+      );
     }
   }}
   class="relative h-full flex flex-col items-end gap-2"

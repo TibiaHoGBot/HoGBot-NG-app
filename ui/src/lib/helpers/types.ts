@@ -1,3 +1,13 @@
+declare global {
+  type LuaCallback = (status: boolean, result: string) => void
+
+  const webview: {
+    loadFile: (value: any, callback: LuaCallback) => void
+    saveFile: (value: string, callback: LuaCallback) => void
+    updateState: (value: string, callback: LuaCallback) => void
+  }
+}
+
 export const EHealthRuleExtraCondition = {
   "None": 0,
   "Bleeding": 1,
@@ -55,33 +65,40 @@ export type INodeContext = {
   meta?: IDropdownMeta
 }
 
-export type UModuleNames = keyof IScript["hogSettings"]
+export type UItemTypes = "healthRule" | "persistenceRule" | "waypointGroup" | "waypoint" | "targetingRule" | "targetingSetting"
 
 export type IUpdateStateParams = {
   action: "update",
-  moduleName: UModuleNames,
+  itemType: UItemTypes,
+  id: string,
   value: Record<string, any>,
-  id: string;
+  parentId?: string
 } | {
   action: "remove",
-  moduleName: UModuleNames,
-  id: string;
+  itemType: UItemTypes,
+  id: string,
+  parentId: string,
 } | {
-  action: "create"
-  moduleName: UModuleNames,
-  value: Record<string, any>,
-  id: string
+  action: "create",
+  itemType: UItemTypes,
+  parentId: string,
+  value: Record<string, any> & { id?: string },
 } | {
   action: "reorder"
-  moduleName: UModuleNames,
+  itemType: UItemTypes,
   startIdx: number,
-  dropIdx: number
-  id: string
+  dropIdx: number,
+  id: string,
+  parentId: string
 } | {
   action: "enable",
-  moduleName: UModuleNames,
+  itemType: UItemTypes,
   id: string,
   value: boolean
+} | {
+  action: "load",
+  itemType: "state",
+  value: Record<string, any>
 }
 
 // *** Dropdown Types *** //

@@ -1,6 +1,12 @@
 <script lang="ts">
-  import { getModuleName, hasEnabledField } from "$lib/helpers/functions";
-  import { m, nodeContext, selectedNode, treeActions } from "$lib/stores";
+  import { getitemType, hasEnabledField } from "$lib/helpers/functions";
+  import {
+    m,
+    nodeContext,
+    selectedNode,
+    selectedParentNode,
+    treeActions,
+  } from "$lib/stores";
 
   let items: {
     label: string;
@@ -16,8 +22,12 @@
         shortcut: "Del",
         eventHandler: (_e: MouseEvent) => {
           if (!$treeActions.onRemove) return;
-          const moduleName = getModuleName($selectedNode.type);
-          $treeActions.onRemove($selectedNode, moduleName);
+          const itemType = getitemType($selectedNode.type);
+          if (!itemType) {
+            console.error("invalid item type");
+            return;
+          }
+          $treeActions.onRemove($selectedNode, itemType, $selectedParentNode);
           nodeContext.set(undefined);
         },
       };
@@ -44,8 +54,12 @@
         shortcut: "Ctrl+E",
         eventHandler: (_e: MouseEvent) => {
           if (!$treeActions.onEnable) return;
-          const moduleName = getModuleName($selectedNode.type);
-          $treeActions.onEnable($selectedNode, moduleName);
+          const itemType = getitemType($selectedNode.type);
+          if (!itemType) {
+            console.error("invalid item type");
+            return;
+          }
+          $treeActions.onEnable($selectedNode, itemType);
         },
         divider: true,
       };

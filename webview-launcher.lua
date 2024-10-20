@@ -1,4 +1,5 @@
 local home = os.getenv("HOME")
+
 if home then
   package.cpath = package.cpath .. ";" .. home .. "/.luarocks/lib/lua/5.3/?.so"
 end

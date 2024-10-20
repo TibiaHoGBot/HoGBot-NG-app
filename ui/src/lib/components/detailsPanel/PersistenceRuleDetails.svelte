@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { nodeContext, treeActions } from "$lib/stores";
+  import { nodeContext, selectedParentNode, treeActions } from "$lib/stores";
   import CodeEditor from "$lib/components/CodeEditor.svelte";
   import IconArrowsMaximize from "$lib/assets/arrows-maximize.svg?raw";
   import type { IPersistenceRuleNode } from "$lib/helpers/types";
@@ -38,10 +38,15 @@
     <button
       onclick={(_e) => {
         if (!$treeActions.onUpdate) return;
-        $treeActions.onUpdate(selectedNode, {
-          ...selectedNode.value,
-          code: editorValue,
-        });
+        $treeActions.onUpdate(
+          selectedNode,
+          {
+            ...selectedNode.value,
+            code: editorValue,
+          },
+          "persistenceRule",
+          $selectedParentNode
+        );
       }}
       disabled={editorValue === selectedNode.value.code}
       class="p-2 btn font-semibold hover:bg-secondary-500/50 border border-secondary-600 w-full"

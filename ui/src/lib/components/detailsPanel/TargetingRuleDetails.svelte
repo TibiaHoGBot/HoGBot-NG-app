@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ITargetingRuleNode } from "$lib/helpers/types";
-  import { treeActions } from "$lib/stores";
+  import { selectedParentNode, treeActions } from "$lib/stores";
   type KEvent = KeyboardEvent & {
     currentTarget: EventTarget & HTMLInputElement;
   };
@@ -35,10 +35,15 @@
         }}
         onfocusout={(e) => {
           if (!$treeActions.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, {
-            ...selectedNode.value,
-            name: e.currentTarget.value,
-          });
+          $treeActions.onUpdate(
+            selectedNode,
+            {
+              ...selectedNode.value,
+              name: e.currentTarget.value,
+            },
+            "targetingRule",
+            $selectedParentNode
+          );
         }}
         value={selectedNode.value.name}
         class="w-full text-sm p-2 border-[1px] border-secondary-500/50 bg-primary-500 outline-none [&::-webkit-inner-spin-button]:appearance-none focus:border-secondary-500 selection:bg-secondary-500"
@@ -52,10 +57,15 @@
         onfocusout={(e) => {
           handleFocusOut(e);
           if (!$treeActions.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, {
-            ...selectedNode.value,
-            count: parseInt(e.currentTarget.value),
-          });
+          $treeActions.onUpdate(
+            selectedNode,
+            {
+              ...selectedNode.value,
+              count: parseInt(e.currentTarget.value),
+            },
+            "targetingRule",
+            $selectedParentNode
+          );
         }}
         onkeypress={validateKeypress}
         type="text"
@@ -74,13 +84,18 @@
             onfocusout={(e) => {
               handleFocusOut(e);
               if (!$treeActions.onUpdate) return;
-              $treeActions.onUpdate(selectedNode, {
-                ...selectedNode.value,
-                targetSelection: {
-                  ...selectedNode.value.targetSelection,
-                  health: parseInt(e.currentTarget.value),
+              $treeActions.onUpdate(
+                selectedNode,
+                {
+                  ...selectedNode.value,
+                  targetSelection: {
+                    ...selectedNode.value.targetSelection,
+                    health: parseInt(e.currentTarget.value),
+                  },
                 },
-              });
+                "targetingRule",
+                $selectedParentNode
+              );
             }}
             onkeypress={validateKeypress}
             maxlength={2}
@@ -96,13 +111,18 @@
             onfocusout={(e) => {
               handleFocusOut(e);
               if (!$treeActions.onUpdate) return;
-              $treeActions.onUpdate(selectedNode, {
-                ...selectedNode.value,
-                targetSelection: {
-                  ...selectedNode.value.targetSelection,
-                  proximity: parseInt(e.currentTarget.value),
+              $treeActions.onUpdate(
+                selectedNode,
+                {
+                  ...selectedNode.value,
+                  targetSelection: {
+                    ...selectedNode.value.targetSelection,
+                    proximity: parseInt(e.currentTarget.value),
+                  },
                 },
-              });
+                "targetingRule",
+                $selectedParentNode
+              );
             }}
             onkeypress={validateKeypress}
             maxlength={2}
@@ -118,13 +138,18 @@
             onfocusout={(e) => {
               handleFocusOut(e);
               if (!$treeActions.onUpdate) return;
-              $treeActions.onUpdate(selectedNode, {
-                ...selectedNode.value,
-                targetSelection: {
-                  ...selectedNode.value.targetSelection,
-                  stickiness: parseInt(e.currentTarget.value),
+              $treeActions.onUpdate(
+                selectedNode,
+                {
+                  ...selectedNode.value,
+                  targetSelection: {
+                    ...selectedNode.value.targetSelection,
+                    stickiness: parseInt(e.currentTarget.value),
+                  },
                 },
-              });
+                "targetingRule",
+                $selectedParentNode
+              );
             }}
             onkeypress={validateKeypress}
             maxlength={2}
@@ -144,10 +169,15 @@
           value={selectedNode.value.mustAttackMe}
           onchange={(e) => {
             if (!$treeActions.onUpdate) return;
-            $treeActions.onUpdate(selectedNode, {
-              ...selectedNode.value,
-              mustAttackMe: e.currentTarget.checked,
-            });
+            $treeActions.onUpdate(
+              selectedNode,
+              {
+                ...selectedNode.value,
+                mustAttackMe: e.currentTarget.checked,
+              },
+              "targetingRule",
+              $selectedParentNode
+            );
           }}
         />
         <p class="text-xs">Must attack me</p>
@@ -159,10 +189,15 @@
           value={selectedNode.value.mustAttackMe}
           onchange={(e) => {
             if (!$treeActions.onUpdate) return;
-            $treeActions.onUpdate(selectedNode, {
-              ...selectedNode.value,
-              onlyIfTrapped: e.currentTarget.checked,
-            });
+            $treeActions.onUpdate(
+              selectedNode,
+              {
+                ...selectedNode.value,
+                onlyIfTrapped: e.currentTarget.checked,
+              },
+              "targetingRule",
+              $selectedParentNode
+            );
           }}
         />
         <p class="text-xs">Only if trapped</p>

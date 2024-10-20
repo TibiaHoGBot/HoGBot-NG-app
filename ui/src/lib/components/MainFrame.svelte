@@ -2,7 +2,12 @@
   import { navItems } from "$lib/data/navItems";
   import { isPersistenceRuleNode } from "$lib/helpers/functions";
   import type { IScript, UNodeRoots } from "$lib/helpers/types";
-  import { nodeContext, selectedNode, treeActions } from "$lib/stores";
+  import {
+    nodeContext,
+    selectedNode,
+    selectedParentNode,
+    treeActions,
+  } from "$lib/stores";
 
   import CodeEditor from "$lib/components/CodeEditor.svelte";
   import ContextMenu from "$lib/components/ContextMenu.svelte";
@@ -27,6 +32,7 @@
 
   const unselectNode = () => {
     selectedNode.set(undefined);
+    selectedParentNode.set(undefined);
   };
 
   $effect(() => {
@@ -122,7 +128,8 @@
                   ...$selectedNode.value,
                   code: editorValue,
                 },
-                "persistences"
+                "persistenceRule",
+                $selectedParentNode
               );
             }}
             disabled={editorValue === $selectedNode.value.code}
