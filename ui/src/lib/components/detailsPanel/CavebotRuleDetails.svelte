@@ -51,6 +51,7 @@
     position: IWaypointNode["value"]["position"]
   ) => {
     if (!$treeActions?.onAdd) return;
+
     $treeActions.onAdd(selectedNode, createWaypoint(position, selectedType));
   };
 </script>

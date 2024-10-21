@@ -2,15 +2,20 @@
   import { navItems } from "$lib/data/navItems";
   import { isPersistenceRuleNode } from "$lib/helpers/functions";
   import type { IScript, UNodeRoots } from "$lib/helpers/types";
-  import { nodeContext, selectedNode, treeActions } from "$lib/stores";
+  import {
+    nodeContext,
+    selectedNode,
+    selectedParentNode,
+    treeActions,
+  } from "$lib/stores";
 
   import CodeEditor from "$lib/components/CodeEditor.svelte";
   import ContextMenu from "$lib/components/ContextMenu.svelte";
   import DetailsPanel from "$lib/components/DetailsPanel.svelte";
   import DropdownModal from "$lib/components/DropdownModal.svelte";
+  import FileButton from "$lib/components/FileButton.svelte";
   import SidebarItem from "$lib/components/SidebarItem.svelte";
   import Tree from "$lib/components/Tree.svelte";
-  import FileButton from "$lib/components/FileButton.svelte";
 
   let {
     data = $bindable(),
@@ -27,6 +32,7 @@
 
   const unselectNode = () => {
     selectedNode.set(undefined);
+    selectedParentNode.set(undefined);
   };
 
   $effect(() => {
@@ -51,17 +57,17 @@
     $nodeContext?.context === "codeEditor"}
   class:opacity-50={$nodeContext?.context === "dropdownMenu" ||
     $nodeContext?.context === "codeEditor"}
-  class="flex main-gradient w-[800px] h-[600px] border-secondary-500"
+  class="flex main-gradient w-[800px] overflow-hidden h-full border-secondary-500"
 >
-  <div class="flex flex-col max-h-[600px] w-full">
+  <div class="flex flex-col w-full">
     <div
       class="flex items-center w-full max-h-[35px] h-full bg-primary-900 font-bold"
     >
       <FileButton {data} mode="save"><span>Save</span></FileButton>
-      <FileButton mode="load"><span>Load</span></FileButton>
+      <FileButton {loadData} mode="load"><span>Load</span></FileButton>
       <FileButton {loadData} mode="init"><span>Init</span></FileButton>
     </div>
-    <div class="flex h-[565px] w-full">
+    <div class="flex w-full h-full">
       <div class="flex flex-col w-[60px] bg-primary-500">
         {#each navItems as { label, icon }, i}
           <SidebarItem bind:currentTab value={i} {icon} {unselectNode} />
@@ -69,7 +75,7 @@
       </div>
 
       <div
-        class="grid w-full overflow-hidden select-none {!isDetailsVisible
+        class="grid w-full h-full overflow-hidden select-none {!isDetailsVisible
           ? 'grid-cols-1'
           : 'grid-cols-2'}"
       >
@@ -122,7 +128,8 @@
                   ...$selectedNode.value,
                   code: editorValue,
                 },
-                "persistences"
+                "persistenceRule",
+                $selectedParentNode
               );
             }}
             disabled={editorValue === $selectedNode.value.code}

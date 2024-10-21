@@ -3,7 +3,7 @@
   import healthRuleData from "$lib/data/healthRuleData.json";
   import { isHealthRuleNode, keyValToItems } from "$lib/helpers/functions";
   import { type IDropdownItem, type IHealthRuleNode, EHealthRuleExtraCondition } from "$lib/helpers/types";
-  import { treeActions } from "$lib/stores";
+  import { selectedParentNode, treeActions } from "$lib/stores";
   import { safeParse, array as varr, literal as vliteral, object as vobj, string as vstr, union as vunion } from 'valibot';
   
   type KEvent = KeyboardEvent & {
@@ -17,14 +17,11 @@
     handleFocusOut: (e: FEvent) => number | null;
     validateKeypress: (e: KEvent) => void} = $props()
 
-
   const disableDrag = (e: DragEvent & {
     currentTarget: EventTarget & HTMLInputElement;
-}) => {
+  }) => {
     e.preventDefault()
   }
-
-
 </script>
 
 <div class="flex flex-col gap-4 mx-4 mt-4 p-4 border border-primary-500/50 rounded-lg">
@@ -46,7 +43,7 @@
         })(),
         onSelectItem: (itemId) => {
           if (!isHealthRuleNode(selectedNode) || !$treeActions.onUpdate || typeof itemId !== "string") return;
-          $treeActions.onUpdate(selectedNode, { ...selectedNode.value, method: itemId }, "healer");
+          $treeActions.onUpdate(selectedNode, { ...selectedNode.value, method: itemId }, "healthRule",  $selectedParentNode);
         },
       }}
     />
@@ -63,7 +60,7 @@
           if (!newVal) return
           e.currentTarget.value = newVal.toString()
           if (oldVal === newVal || !$treeActions?.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, {...selectedNode.value, hpMin: newVal}, "healer")
+          $treeActions.onUpdate(selectedNode, {...selectedNode.value, hpMin: newVal}, "healthRule",  $selectedParentNode)
         }}
         onkeypress={validateKeypress}
         ondragstart={disableDrag}
@@ -82,7 +79,7 @@
           if (!newVal) return
           e.currentTarget.value = newVal.toString()
           if (oldVal === newVal || !$treeActions?.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, {...selectedNode.value, hpMax: newVal}, "healer")
+          $treeActions.onUpdate(selectedNode, {...selectedNode.value, hpMax: newVal}, "healthRule",  $selectedParentNode)
         }}
         onkeypress={validateKeypress}
         ondragstart={disableDrag}
@@ -105,7 +102,7 @@
           if (!newVal) return
           e.currentTarget.value = newVal.toString()
           if (oldVal === newVal || !$treeActions?.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, {...selectedNode.value, mpMin: newVal}, "healer")
+          $treeActions.onUpdate(selectedNode, {...selectedNode.value, mpMin: newVal}, "healthRule",  $selectedParentNode)
         }}
         onkeypress={validateKeypress}
         ondragstart={disableDrag}
@@ -124,7 +121,7 @@
           if (!newVal) return
           e.currentTarget.value = newVal.toString()
           if (oldVal === newVal || !$treeActions?.onUpdate) return;
-          $treeActions.onUpdate(selectedNode, {...selectedNode.value, mpMax: newVal}, "healer")
+          $treeActions.onUpdate(selectedNode, {...selectedNode.value, mpMax: newVal}, "healthRule",  $selectedParentNode)
         }}
         onkeypress={validateKeypress}
         ondragstart={disableDrag}
@@ -145,7 +142,7 @@
           onSelectItem: (itemId) => {
             const id = itemId  as typeof EHealthRuleExtraCondition[keyof typeof EHealthRuleExtraCondition] 
             if (!isHealthRuleNode(selectedNode) || !$treeActions.onUpdate) return;
-            $treeActions.onUpdate(selectedNode, { ...selectedNode.value, extraCondition: id }, "healer");
+            $treeActions.onUpdate(selectedNode, { ...selectedNode.value, extraCondition: id }, "healthRule",  $selectedParentNode);
           },
         }}
     />

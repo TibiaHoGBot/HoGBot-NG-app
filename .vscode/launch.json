@@ -1,20 +1,19 @@
 {
   "version": "0.2.0",
   "configurations": [
-      {
-          "type": "LuaHelper-Debug",
-          "request": "launch",
-          "name": "Debug Lua Script",
-          "description": "Debug Lua with arguments",
-          "luaPath": "lua5.3",
-          "packagePath": [],
-          "luaFileExtension": ".lua",
-          "connectionPort": 8818,
-          "stopOnEntry": false,
-          "useCHook": true,
-          "program": "${workspaceFolder}/index.lua",
-          "args": ["http://localhost:5173"],
-          "cwd": "${workspaceFolder}"
-      }
+    {
+      "type": "lua-local",
+      "request": "launch",
+      "name": "Debug Lua App",
+      "program": {
+        "lua": "lua5.3",
+        "file": "${workspaceFolder}/index.lua"
+      },
+      "args": [
+        "http://localhost:5173"
+      ],
+      "cwd": "${workspaceFolder}",
+      "stopOnEntry": true,
+    }
   ]
 }

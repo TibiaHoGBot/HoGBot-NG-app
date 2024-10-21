@@ -1,4 +1,4 @@
-import { EAttackAvoidance, EAttackSettings, EDesiredDistance, EDesiredStance, EHealthRuleExtraCondition, ENodeTypes, type ICavebotRuleNode, type IHealthRuleNode, type IPersistenceRuleNode, type IScript, type ITargetingRuleNode, type ITargetingSettingsRuleNode, type IWaypointNode, type UModuleNames, type UNodeChildren, type UNodeRoots, type UNodes } from "./types";
+import { EAttackAvoidance, EAttackSettings, EDesiredDistance, EDesiredStance, EHealthRuleExtraCondition, ENodeTypes, type ICavebotRuleNode, type IHealthRuleNode, type IPersistenceRuleNode, type IScript, type ITargetingRuleNode, type ITargetingSettingsRuleNode, type IWaypointNode, type UItemTypes, type UNodeChildren, type UNodeRoots, type UNodes } from "./types";
 
 export function keyValToItems<T extends Record<any, any>>(keyval: T, category: string): Array<{ id: T[keyof T]; label: keyof T, category: string }>;
 export function keyValToItems<T extends Record<any, any>>(keyval: T): Array<{ id: T[keyof T]; label: keyof T }>;
@@ -49,20 +49,22 @@ export const moveItemInArray = <T extends UNodeChildren>(
   return newArr as T;
 };
 
-export const getModuleName = (type: typeof ENodeTypes[keyof typeof ENodeTypes]): UModuleNames => {
+export const getitemType = (type: typeof ENodeTypes[keyof typeof ENodeTypes]): UItemTypes | null => {
   switch (type) {
-    case ENodeTypes["CavebotRootNode"]:
     case ENodeTypes["CavebotRuleNode"]:
+      return "waypointGroup"
     case ENodeTypes["WaypointNode"]:
-      return "cavebot"
-    case ENodeTypes["HealthRootNode"]:
+      return "waypoint"
     case ENodeTypes["HealthRuleNode"]:
-      return "healer"
-    case ENodeTypes["PersistenceRootNode"]:
+      return "healthRule"
     case ENodeTypes["PersistenceRuleNode"]:
-      return "persistences"
+      return "persistenceRule"
+    case ENodeTypes["TargetingRuleNode"]:
+      return "targetingRule"
+    case ENodeTypes["TargetingSettingsRuleNode"]:
+      return "targetingSetting"
     default:
-      return "targeting"
+      return null
   }
 }
 

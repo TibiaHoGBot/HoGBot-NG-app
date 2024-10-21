@@ -4,7 +4,6 @@
       {
         "id": "1",
         "label": "HealRules",
-        "selected": false,
         "expanded": true,
         "childrenType": 10,
         "children": [
@@ -31,7 +30,6 @@
       {
         "id": "3",
         "label": "Cavebot Rules",
-        "selected": false,
         "expanded": true,
         "childrenType": 11,
         "children": [],
@@ -42,7 +40,6 @@
       {
         "id": "4",
         "label": "Persistence Rules",
-        "selected": false,
         "expanded": true,
         "childrenType": 12,
         "children": [],
@@ -53,7 +50,6 @@
       {
         "id": "5",
         "label": "Targeting Rules",
-        "selected": false,
         "expanded": true,
         "childrenType": 13,
         "children": [],

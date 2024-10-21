@@ -17,15 +17,30 @@
 
   const saveFile = (): void => {
     if (!data) return;
-    const json = JSON.stringify(data, null, 2);
+    const str = JSON.stringify(data, null, 2);
 
-    //@ts-ignore
-    window.external.invoke(`saveFile:${json}`)
+    webview.saveFile(str, (status, res) => {
+      if (status) {
+        
+      } else {
+        console.error(status, res)
+      }
+    })
+
   };
 
   const loadFile = (): void => {
-    //@ts-ignore
-    window.external.invoke(`loadFile:`)
+    webview.loadFile("", (status, res) => {
+      if (status) {
+        if (!loadData) {
+          console.error("Could not load data");
+          return;
+        }
+        loadData(JSON.parse(res))
+      } else {
+        console.error(status, res)
+      }
+    })
   }
 
 </script>

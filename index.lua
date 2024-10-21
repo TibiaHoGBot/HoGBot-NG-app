@@ -1,22 +1,25 @@
 local home = os.getenv("HOME")
-local launcher = require('webview-launcher')
-local dialog = require("nvdialog")
-local helpers = require("bot_modules/helpers")
-local jsonLib = require("cjson")
-local createBhTree = require("behaviourtree/init")
 
 if home then
   package.cpath = package.cpath .. ";" .. home .. "/.luarocks/lib/lua/5.3/?.so"
 end
+
+local webviewLib = require('webview')
+local dialog = require("nvdialog")
+local jsonLib = require("cjson")
+local utils = require("webview-launcher")
+
+local api = require("bot_modules/api")
+local createBhTree = require("behaviourtree/init")
+
+-- require("lldebugger").start()
 
 dialog.init()
 
 local state = {
   healer = {
     enabled = true,
-    rules = {
-    },
-    activeRule = nil
+    rules = {}
   },
   persistences = {
     enabled = false,
@@ -24,7 +27,7 @@ local state = {
   },
   cavebot = {
     enabled = false,
-    rules = {}
+    waypoints = {}
   },
   targeting = {
     enabled = false,
@@ -40,26 +43,31 @@ if not bhtree then
   os.exit(0)
 end
 
+-- local url = 'http://localhost:5173/'
+local url = 'https://hogbot-ng-app.pages.dev/'
 
-local url, wxOptions = helpers.parseArgs()
-
-local saveFile = helpers.saveFile
-local loadFile = helpers.loadFile
-local loadState = helpers.loadState
-local updateState = helpers.updateState
+local webview = webviewLib.new(url, 'HoGBOT-NG', 800, 600, false, true)
 
 local options = {
   expose = {
-    saveFile = saveFile,
-    loadFile = loadFile,
-    loadState = loadState,
-    update = updateState
+    saveFile = api.saveFile,
+    loadFile = api.loadFile,
+    updateState = api.updateState
   },
   context = {
     dialog = dialog,
     jsonLib = jsonLib,
     state = state
-  }
+  },
+  initialize = true,
 }
 
-launcher.launchWithOptions(url, wxOptions, options)
+local callback = utils.createContext(webview, options)
+
+webviewLib.callback(webview, callback)
+
+function process_ui()
+  webviewLib.loop(webview, "once")
+end
+
+-- webviewLib.loop(webview)
