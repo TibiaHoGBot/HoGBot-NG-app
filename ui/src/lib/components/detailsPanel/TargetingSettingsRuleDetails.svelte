@@ -17,7 +17,7 @@
   let {selectedNode, handleFocusIn, handleFocusOut, validateKeypress}: {
     selectedNode: ITargetingSettingsRuleNode,
     handleFocusIn: (e: FEvent) => void,
-    handleFocusOut: (e: FEvent) => void;
+    handleFocusOut: (e: FEvent) => number | null;
     validateKeypress: (e: KEvent) => void} = $props()
 
 
@@ -53,11 +53,12 @@
       <input
           onfocusin={handleFocusIn}
           onfocusout={(e) => {
-            handleFocusOut(e);
-            if (!$treeActions.onUpdate) return;
+            const oldVal = selectedNode.value.hpMin;
+            const newVal = handleFocusOut(e);
+            if (oldVal === newVal || !newVal || !$treeActions.onUpdate) return;
             $treeActions.onUpdate(selectedNode, {
               ...selectedNode.value,
-              hpMin: parseInt(e.currentTarget.value)
+              hpMin: newVal,
             }, "targetingSetting", $selectedParentNode);
           }}
           onkeypress={validateKeypress}
@@ -69,11 +70,12 @@
         <input
           onfocusin={handleFocusIn}
           onfocusout={(e) => {
-            handleFocusOut(e);
-            if (!$treeActions.onUpdate) return;
+            const oldVal = selectedNode.value.hpMax;
+            const newVal = handleFocusOut(e);
+            if (oldVal === newVal || !newVal || !$treeActions.onUpdate) return;
             $treeActions.onUpdate(selectedNode, {
               ...selectedNode.value,
-              hpMax: parseInt(e.currentTarget.value)
+              hpMax: newVal,
             }, "targetingSetting", $selectedParentNode);
           }}
           onkeypress={validateKeypress}

@@ -161,7 +161,6 @@ function stateManager.updateState(value, callback, context, _)
   local jsonLib = context.jsonLib
   local state = context.state
 
-
   local s, parsed = pcall(parseInput, jsonLib, value)
 
   if not s then

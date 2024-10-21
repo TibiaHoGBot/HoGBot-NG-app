@@ -19,8 +19,7 @@ dialog.init()
 local state = {
   healer = {
     enabled = true,
-    rules = {
-    }
+    rules = {}
   },
   persistences = {
     enabled = false,
@@ -28,9 +27,7 @@ local state = {
   },
   cavebot = {
     enabled = false,
-    waypoints = {
-
-    }
+    waypoints = {}
   },
   targeting = {
     enabled = false,
@@ -49,7 +46,7 @@ end
 -- local url = 'http://localhost:5173/'
 local url = 'https://hogbot-ng-app.pages.dev/'
 
-local webview = webviewLib.new(url, 'HoGBOT-NG', 800, 600, true, true)
+local webview = webviewLib.new(url, 'HoGBOT-NG', 800, 600, false, true)
 
 local options = {
   expose = {

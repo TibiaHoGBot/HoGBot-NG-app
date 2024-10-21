@@ -32,7 +32,10 @@
   const loadFile = (): void => {
     webview.loadFile("", (status, res) => {
       if (status) {
-        if (!loadData) return;
+        if (!loadData) {
+          console.error("Could not load data");
+          return;
+        }
         loadData(JSON.parse(res))
       } else {
         console.error(status, res)

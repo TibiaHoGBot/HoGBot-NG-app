@@ -8,8 +8,8 @@
   import { draggedNodeInfo, dragTimer, dropInfo, nodeContext, selectedNode, selectedParentNode, treeActions } from '$lib/stores';
  
   import MainFrame from '$lib/components/MainFrame.svelte';
-
-  let data: IScript = $state(createDefaultAppState())
+  
+  let data: IScript | undefined = $state()
 
   const schemaTreeNode = vobj({
     id: vstr(),
@@ -38,7 +38,6 @@
     ),
     type: vpipe(vnum(), vval(ENodeTypes["HealthRootNode"]))
   })
-
 
   const schemaCavebotRootNode = vobj({
     ...schemaTreeNode.entries,
@@ -132,8 +131,6 @@
     })),
     type: vpipe(vnum(), vval(ENodeTypes["TargetingRootNode"]))
   })
-  
-
 
   const schema = vobj({
     hogSettings: vobj({
@@ -159,8 +156,6 @@
       ),
     })
   })
-  
-
 
   const loadData = (newData: Record<string, any>) => {
     const res = safeParse(schema, newData)
@@ -186,26 +181,25 @@
               data["hogSettings"]["cavebot"][0].children.map(parent => {
                 return {[parent.id]: parent.children.map(child => {return {id: child.id, ...child.value}}
                 )}
-              })
-            
+              })      
           },
           persistences: {
             enabled: false,
             rules: data["hogSettings"]["persistences"][0].children.map(child => {
-            return {id: child.id, ...child.value}
-          })
+              return {id: child.id, ...child.value}
+            })
           },
           targeting: {
             enabled: false,
             rules: 
               data["hogSettings"]["targeting"][0].children.map(parent => {
-                return {...parent.value, id: parent.id, settings: parent.children.map(child => {return {id: child.id, ...child.value}}
+                  return {...parent.value, id: parent.id, settings: parent.children.map(child => {return {id: child.id, ...child.value}}
                 )}
               })
           }
         }
       }
-      //@ts-ignore
+      
       webview.updateState(JSON.stringify(params), (status, res) => {
         if (status) {
         } else {
@@ -217,8 +211,7 @@
     }
   }
 
-  //@ts-ignore
-  loadData(data)
+  loadData(createDefaultAppState())
 </script>
 
 
@@ -278,15 +271,18 @@
   }}
 />
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div
-  class:!cursor-grabbing={$draggedNodeInfo}
-  onclick={(_e) => {
-    nodeContext.set(undefined);
-  }}
-  class="flex  items-center justify-center bg-gradient-to-br from-surface-500 to-surface-600 w-full h-screen text-white"
->
-  <MainFrame bind:data {loadData} />
-</div>
+{#if data}
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div
+    class:!cursor-grabbing={$draggedNodeInfo}
+    onclick={(_e) => {
+      nodeContext.set(undefined);
+    }}
+    class="flex  items-center justify-center bg-gradient-to-br from-surface-500 to-surface-600 w-full h-screen text-white"
+  >
+    <MainFrame bind:data {loadData} />
+  </div>
+{/if}
+
 

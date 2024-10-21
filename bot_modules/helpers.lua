@@ -40,10 +40,10 @@ function helpers.loadFile(_, callback, context, _)
     return
   end
 
-  local file, _ = io.open(path, "r")
+  local file, r = io.open(path, "r")
 
   if not file then
-    callback(false, tostring("loadFile: Error opening file"))
+    callback(false, tostring("loadFile: Error opening file: " .. tostring(r)))
     return
   end
 
