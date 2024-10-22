@@ -1,7 +1,6 @@
-local _PACKAGE  = (...):match("^(.+)[%./][^%./]+"):gsub("[%./]?nodes", "")
-
-local Task      = require(_PACKAGE .. '/node_types/node')
-local Decorator = require(_PACKAGE .. '/node_types/decorator')
+local Task      = require('libs/behaviourtree/node_types/node')
+local Decorator = require('libs/behaviourtree/node_types/decorator')
+local bt        = require('libs/behaviourtree/behaviour_tree')
 
 function Heal(config)
   local props = config.properties
@@ -46,9 +45,9 @@ function GetProperHealthRule(config)
   return Decorator:new(config)
 end
 
-local function registerHogNodes(reg)
-  reg.register("Heal", Heal)
-  reg.register("GetProperHealthRule", GetProperHealthRule)
+local function registerHogNodes()
+  bt.register("Heal", Heal)
+  bt.register("GetProperHealthRule", GetProperHealthRule)  
 end
 
 return registerHogNodes

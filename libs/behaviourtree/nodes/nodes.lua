@@ -229,7 +229,6 @@ local function Wait(config)
   return Task:new(config)
 end
 
-
 local function registerPremadeNodes(reg)
   reg.register("RunRandomWeight", RunRandomWeight)
   reg.register("RandomThrough", RandomThrough)

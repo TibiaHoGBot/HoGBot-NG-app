@@ -1,18 +1,13 @@
-local _PACKAGE         = (...):match("^(.+)[%./][^%./]+") or ""
-local Registry         = require(_PACKAGE .. '/registry')
-local bt               = require(_PACKAGE .. '/behaviour_tree')
-local registerHogNodes = require(_PACKAGE .. "/nodes/hog_nodes")
+local bt               = require('libs/behaviourtree/behaviour_tree')
 local json             = require("cjson")
-local projectFile      = _PACKAGE .. "/hog.b3"
-
+local projectFile      = "hog.b3"
+local registerHogNodes = require("bot_modules/bt_nodes")
 
 local function createTree(state, debug)
   if not state or type(state) ~= "table" then
     print("behaviour_tree: must be a valid state")
     return
   end
-
-  registerHogNodes(Registry)
 
   local file, err = io.open(projectFile, "r")
 
@@ -24,6 +19,8 @@ local function createTree(state, debug)
   local projectJsonTable = json.decode(file:read("*a"))
 
   file:close()
+
+  registerHogNodes()
 
   local bTrees = bt.LoadBehavior3Project(projectJsonTable, state)
 

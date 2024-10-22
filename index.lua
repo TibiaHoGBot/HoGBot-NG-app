@@ -10,9 +10,7 @@ local jsonLib = require("cjson")
 local utils = require("webview-launcher")
 
 local api = require("bot_modules/api")
-local createBhTree = require("behaviourtree/init")
-
--- require("lldebugger").start()
+local createBhTree = require("bot_modules/bt_init")
 
 dialog.init()
 
@@ -45,7 +43,6 @@ end
 
 -- local url = 'http://localhost:5173/'
 local url = 'https://hogbot-ng-app.pages.dev/'
-
 local webview = webviewLib.new(url, 'HoGBOT-NG', 800, 600, false, true)
 
 local options = {
@@ -69,5 +66,3 @@ webviewLib.callback(webview, callback)
 function process_ui()
   webviewLib.loop(webview, "once")
 end
-
--- webviewLib.loop(webview)

@@ -278,10 +278,7 @@ end
 ----------------------------------------------------------------
 BehaviourTree.LoadBehavior3Project = function(jsonTable, state, parsedDataCb)
   local roots = ParseBehavior3Project(jsonTable, state, parsedDataCb)
-  for k, v in pairs(roots) do
-    print("XD")
-    print(tostring(k) .. tostring(v))
-  end
+
   for title, root in pairs(roots) do
     roots[title] = BehaviourTree:new({ root = root, name = title })
     roots[title]:setStateObject(state)
