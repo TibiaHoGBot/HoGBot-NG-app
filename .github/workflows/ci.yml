@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
@@ -33,6 +33,12 @@ jobs:
       - name: Move built files to top-level dist
         run: mv ./ui/dist/* ./dist/
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: dist/
+
   deploy:
     needs: build
     environment:
@@ -44,6 +50,10 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
