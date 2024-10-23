@@ -1,0 +1,14 @@
+{
+  "name": "hogbot-ng-app",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "bundle-lua": "node scripts/bundle-lua.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "luabundle": "^1.7.0"
+  },
+  "type": "module"
+}

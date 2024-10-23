@@ -1,0 +1,32 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Bundle lua into single file
+        run: npm run bundle-lua
+
+      - name: Bundle ui into single file
+        run: npm ci && npm run build
+        working-directory: ui
+
+      - name: Move built files to top-level dist
+        run: mv ./ui/dist/* ./dist/

@@ -1,4 +1,4 @@
-local _PACKAGE  = (...):match("^(.+)[%./][^%./]+"):gsub("[%./]?node_types", "")
+local _PACKAGE  = "libs/behaviourtree"
 local class     = require(_PACKAGE .. '/middleclass')
 local Node      = require(_PACKAGE .. '/node_types/node')
 local Decorator = class('Decorator', Node)

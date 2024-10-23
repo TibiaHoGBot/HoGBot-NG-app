@@ -1,4 +1,4 @@
-local _PACKAGE = (...):match("^(.+)[%./][^%./]+") or ""
+local _PACKAGE = "libs/behaviourtree"
 local Registry = require(_PACKAGE .. '/registry')
 local g        = _BehaviourTreeGlobals
 

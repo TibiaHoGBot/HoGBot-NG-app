@@ -4,7 +4,7 @@ _BehaviourTreeGlobals                 = {}
 _BehaviourTreeImports                 = _BehaviourTreeImports or {}
 ----------------------------
 
-local _PACKAGE                        = (...):match("^(.+)[%./][^%./]+") or ""
+local _PACKAGE                        = "libs/behaviourtree"
 local class                           = require(_PACKAGE .. '/middleclass')
 local Registry                        = require(_PACKAGE .. '/registry')
 local Node                            = require(_PACKAGE .. '/node_types/node')
