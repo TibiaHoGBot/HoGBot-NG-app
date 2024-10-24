@@ -38,8 +38,8 @@ if not bhtree then
   os.exit(0)
 end
 
-local url = 'http://localhost:5173/'
--- local url = 'https://hogbot-ng-app.pages.dev/'
+-- local url = 'http://localhost:5173/'
+local url = 'https://hogbot-ng-app.pages.dev/'
 local webview = webviewLib.new(url, 'HoGBOT-NG', 800, 600, false, true)
 
 local options = {
@@ -63,5 +63,3 @@ webviewLib.callback(webview, callback)
 function process_ui()
   webviewLib.loop(webview, "once")
 end
-
-webviewLib.loop(webview)
