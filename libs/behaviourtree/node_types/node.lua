@@ -1,5 +1,4 @@
-local _PACKAGE = "libs/behaviourtree"
-local class    = require(_PACKAGE .. '/middleclass')
+local class    = require('libs/behaviourtree/middleclass')
 local Node     = class('Node')
 local g        = _BehaviourTreeGlobals
 

@@ -1,6 +1,5 @@
-local _PACKAGE   = "libs/behaviourtree"
-local class      = require(_PACKAGE .. '/middleclass')
-local BranchNode = require(_PACKAGE .. '/node_types/branch_node')
+local class      = require('libs/behaviourtree/middleclass')
+local BranchNode = require('libs/behaviourtree/node_types/branch_node')
 local RunRandom  = class('RunRandom', BranchNode)
 
 -- Helper function to perform weighted random selection

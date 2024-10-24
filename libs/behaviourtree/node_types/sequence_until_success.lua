@@ -1,7 +1,6 @@
-local _PACKAGE             = "libs/behaviourtree"
-local class                = require(_PACKAGE .. '/middleclass')
-local Sequence             = require(_PACKAGE .. '/node_types/sequence')
-local BranchNode           = require(_PACKAGE .. '/node_types/branch_node')
+local class                = require('libs/behaviourtree/middleclass')
+local Sequence             = require('libs/behaviourtree/node_types/sequence')
+local BranchNode           = require('libs/behaviourtree/node_types/branch_node')
 local SequenceUntilSuccess = class('SequenceUntilSuccess', Sequence)
 
 function SequenceUntilSuccess:fail()

@@ -1,6 +1,5 @@
-local _PACKAGE   = "libs/behaviourtree"
-local class      = require(_PACKAGE .. '/middleclass')
-local Node       = require(_PACKAGE .. '/node_types/node')
+local class      = require('libs/behaviourtree/middleclass')
+local Node       = require('libs/behaviourtree/node_types/node')
 local BranchNode = class('BranchNode', Node)
 
 -- Seems to be bugged, needs a rewrite, seem to start nodes multiple times

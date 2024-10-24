@@ -1,5 +1,4 @@
-local _PACKAGE = "libs/behaviourtree"
-local Registry = require(_PACKAGE .. '/registry')
+local Registry = require('libs/behaviourtree/registry')
 local g        = _BehaviourTreeGlobals
 
 

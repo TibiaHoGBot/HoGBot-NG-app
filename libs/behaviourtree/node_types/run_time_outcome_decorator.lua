@@ -1,6 +1,5 @@
-local _PACKAGE                = "libs/behaviourtree"
-local class                   = require(_PACKAGE .. '/middleclass')
-local Decorator               = require(_PACKAGE .. '/node_types/decorator')
+local class                   = require('libs/behaviourtree/middleclass')
+local Decorator               = require('libs/behaviourtree/node_types/decorator')
 local RunTimeOutcomeDecorator = class('RunTimeOutcomeDecorator', Decorator)
 local g                       = _BehaviourTreeGlobals
 

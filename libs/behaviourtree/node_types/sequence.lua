@@ -1,7 +1,6 @@
-local _PACKAGE   = "libs/behaviourtree"
-local class      = require(_PACKAGE .. '/middleclass')
-local BranchNode = require(_PACKAGE .. '/node_types/branch_node')
-local Node       = require(_PACKAGE .. '/node_types/node')
+local class      = require('libs/behaviourtree/middleclass')
+local BranchNode = require('libs/behaviourtree/node_types/branch_node')
+local Node       = require('libs/behaviourtree/node_types/node')
 local Sequence   = class('Sequence', BranchNode)
 
 local function ShuffleInPlace(t)

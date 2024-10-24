@@ -1,9 +1,7 @@
-local _PACKAGE           = "libs/behaviourtree"
-
-local Task               = require(_PACKAGE .. '/node_types/node')
-local Decorator          = require(_PACKAGE .. '/node_types/decorator')
-local RepeaterDecorator  = require(_PACKAGE .. '/node_types/repeater_decorator')
-local InterruptDecorator = require(_PACKAGE .. '/node_types/interrupt_decorator')
+local Task               = require('libs/behaviourtree/node_types/node')
+local Decorator          = require('libs/behaviourtree/node_types/decorator')
+local RepeaterDecorator  = require('libs/behaviourtree/node_types/repeater_decorator')
+local InterruptDecorator = require('libs/behaviourtree/node_types/interrupt_decorator')
 local g                  = _BehaviourTreeGlobals
 
 
