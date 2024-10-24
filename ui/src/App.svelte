@@ -6,7 +6,8 @@
   import { createDefaultAppState, getitemType, moveItemInArray } from '$lib/helpers/functions';
   import { EAttackAvoidance, EAttackSettings, EDesiredDistance, EDesiredStance, EHealthRuleExtraCondition, ENodeTypes, EWaypointType, type IScript, type IUpdateStateParams } from '$lib/helpers/types';
   import { draggedNodeInfo, dragTimer, dropInfo, nodeContext, selectedNode, selectedParentNode, treeActions } from '$lib/stores';
- 
+  import { onMount } from 'svelte';
+
   import MainFrame from '$lib/components/MainFrame.svelte';
   
   let data: IScript | undefined = $state()
@@ -211,7 +212,9 @@
     }
   }
 
-  loadData(createDefaultAppState())
+  onMount(() => {
+    loadData(createDefaultAppState())
+  })
 </script>
 
 
