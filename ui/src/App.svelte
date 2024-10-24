@@ -212,10 +212,9 @@
     }
   }
 
-  onMount(() => {
-    console.log("loadData", webview != null)
+  window.onWebviewInitalized = function(_webview: typeof webview) {
     loadData(createDefaultAppState())
-  })
+  }
 </script>
 
 
