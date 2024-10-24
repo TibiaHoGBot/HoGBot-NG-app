@@ -213,6 +213,7 @@
   }
 
   onMount(() => {
+    console.log("loadData", webview != null)
     loadData(createDefaultAppState())
   })
 </script>
